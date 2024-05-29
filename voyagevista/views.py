@@ -1,7 +1,11 @@
 from django.shortcuts import render
-from django.http import HttpResponse
+from voyagevista.models import Item
 
-def my_blog(request):
-    return HttpResponse("Hello, Blog!")
+def home_view(request):
+    items = Item.objects.all()
+    context = {
+        'items': items
+    }
+    return render(request, 'main/home.html', context)
 
 # Create your views here.
