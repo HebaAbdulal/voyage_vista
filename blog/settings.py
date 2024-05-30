@@ -31,6 +31,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 DEBUG = True
 
 ALLOWED_HOSTS = ['8000-hebaabdulal-voyagevista-dzvyodd221d.ws-eu114.gitpod.io']
+ALLOWED_HOSTS = ['ckz8780-django-voyagevista-app-19845c20e94f.herokuapp.com']
 
 
 # Application definition
