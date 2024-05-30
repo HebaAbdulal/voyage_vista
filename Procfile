@@ -1,1 +1,1 @@
-web: gunicorn django_voyagevista.wsgi.application
+web: gunicorn blog.wsgi
