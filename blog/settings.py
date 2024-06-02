@@ -136,9 +136,16 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
 STATIC_URL = '/static/'
-STATICFILES_STORAGE = 'cloudinary_storage.strorage.StaticHashedCloudinaryStorage'
+STATICFILES_STORAGE = 'cloudinary_storage.storage.StaticHashedCloudinaryStorage'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
-STATIC_ROOT = [os.path.join(BASE_DIR, 'staticfiles')]
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+# Cloudinary settings
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': 'do750l1sr',
+    'API_KEY': '381116349771517',
+    'API_SECRET': 'UcCcID0ADWt0lAMz-NHqJwTED8w',
+}
 
 MEDIA_URL = '/media/'
 DEFAULT_FILE_STORAGE = 'cloudinary.storage.storage.MediaCloudinaryStorage'
