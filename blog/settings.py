@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'cloudinary_storage',
     'django.contrib.staticfiles',
     'cloudinary',
+    'django_summernote',
     'voyagevista',
 ]
 
@@ -148,7 +149,7 @@ CLOUDINARY_STORAGE = {
 }
 
 MEDIA_URL = '/media/'
-DEFAULT_FILE_STORAGE = 'cloudinary.storage.storage.MediaCloudinaryStorage'
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
