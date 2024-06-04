@@ -17,8 +17,37 @@ the field filters, the fields to be prepopulated, and the configuration for the 
     ordering = ('-created_on',)
     summernote_fields = ('content',)
 
-
-
+    summernote_config = {
+        'summernote': {
+            'toolbar': [
+                ['style', ['style']],
+                ['font', ['bold', 'italic', 'underline', 'clear']],
+                ['fontname', ['fontname']],
+                ['color', ['color']],
+                ['para', ['ul', 'ol', 'paragraph']],
+                ['height', ['height']],
+                ['table', ['table']],
+                ['insert', ['link', 'picture', 'video']],
+                ['view', ['fullscreen', 'codeview', 'help']],
+            ],
+            'height': 400,
+            'width': '100%',
+            'popover': {
+                'image': [
+                    ['image', ['resizeFull', 'resizeHalf', 'resizeQuarter', 'resizeNone']],
+                    ['float', ['floatLeft', 'floatRight', 'floatNone']],
+                    ['remove', ['removeMedia']],
+                ],
+                'link': [
+                    ['link', ['linkDialogShow', 'unlink']],
+                ],
+                'table': [
+                    ['add', ['addRowDown', 'addRowUp', 'addColLeft', 'addColRight']],
+                    ['delete', ['deleteRow', 'deleteCol', 'deleteTable']],
+                ],
+            },
+        },
+    }
 
 # Register your models here.
 
