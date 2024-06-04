@@ -12,7 +12,7 @@ the field filters, the fields to be prepopulated, and the configuration for the 
     list_filter = ('status', 'created_on', 'approved', 'author', 'updated_on', 'category')
     list_display = ('status', 'created_on', 'approved', 'slug', 'title', 'author')
     prepopulated_fields = {'slug': ('title',)}
-    search_fields = ('title', 'content')
+    search_fields = ['title', 'content']
     date_hierarchy = 'created_on'
     ordering = ('-created_on',)
     summernote_fields = ('content',)
@@ -49,7 +49,6 @@ the field filters, the fields to be prepopulated, and the configuration for the 
         },
     }
 
-# Register your models here.
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
@@ -67,3 +66,4 @@ class CommentAdmin(admin.ModelAdmin):
     list_display = ('post', 'created_on', 'author', 'approved')
     list_filter = ('author', 'created_on', 'approved')
     search_fields = ('email', 'author', 'title')
+    
