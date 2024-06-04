@@ -22,6 +22,7 @@ class Category(models.Model):
     def __str__(self):
         return self.name
 
+
 class Post(models.Model):
     """
     Model representing a blog post.
@@ -83,18 +84,22 @@ class Post(models.Model):
         """
         return self.saves.count()
 
+
 class Comment(models.Model):
+    """
+    Model representing a comment on a post.
+    """
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="comments")
-    name = models.CharField(max_length=80)
-    email = models.EmailField()
     body = models.TextField()
     created_on = models.DateTimeField(auto_now_add=True)
     approved = models.BooleanField(default=False)
+    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name="commenter", default=1)
+    email = models.EmailField()
 
     class Meta:
         ordering = ['-created_on']
 
     def __str__(self):
-        return f"comment {self.body} by {self.name}"
+        return f"comment {self.body} by {self.author.username}"
 
 
