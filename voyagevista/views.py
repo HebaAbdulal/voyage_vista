@@ -1,8 +1,8 @@
-from django.shortcuts import render, get_list_or_404
+from django.shortcuts import render, get_list_or_404, get_object_or_404
 from django.views import generic
 from .models import Post, Category
 from django.core.paginator import Paginator
-
+from .forms import CommentForm
 
 
 def category_view(request, category_slug=None):
@@ -36,8 +36,24 @@ def post_detail(request, slug):
     """
     post = get_object_or_404(Post, slug=slug)
     comments = Comment.objects.filter(post=post, active=True)
+
+    # Increment view count
+    post.number_of_views += 1
+    post.save()
+
+    # Handle new comment submission
+    if request.method == 'POST':
+        comment_form = CommentForm(data=request.POST)
+        if comment_form.is_valid():
+            new_comment = comment_form.save(commit=False)
+            new_comment.post = post
+            new_comment.save()
+    else:
+        comment_form = CommentForm()
+
     context = {
         'post': post,
-        'comments': comments
+        'comments': comments,
+        'comment_form': comment_form,
     }
     return render(request, 'post_detail.html', context)
