@@ -1,0 +1,26 @@
+[
+    {
+        "model": "voyagevista.category",
+        "pk": 1,
+        "fields": {
+            "name": "Destinations",
+            "slug": "destinations"
+        }
+    },
+    {
+        "model": "voyagevista.category",
+        "pk": 2,
+        "fields": {
+            "name": "Travel Tips",
+            "slug": "travel-tips"
+        }
+    },
+    {
+        "model": "voyagevista.category",
+        "pk": 3,
+        "fields": {
+            "name": "Accommodation",
+            "slug": "accommodation"
+        }
+    }
+]
