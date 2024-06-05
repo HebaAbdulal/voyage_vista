@@ -8,12 +8,6 @@
             <div class="row">
                 <!-- Category Navigation -->
                 <div class="col-12 mb-3">
-                    <nav class="nav">
-                        <a class="nav-link" href="{% url 'home' %}">All</a>
-                        {% for cat in categories %}
-                        <a class="nav-link" href="{% url 'category' category_slug=cat.slug %}">{{ cat.name }}</a>
-                        {% endfor %}
-                    </nav>
                 </div>
                 <!-- Posts List -->
                 {% for post in page_obj %}

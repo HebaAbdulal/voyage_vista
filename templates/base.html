@@ -43,9 +43,9 @@
                             Categories
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="categoriesDropdown">
-                            <li><a class="dropdown-item" href="{% url 'category' slug='destinations' %}">Destinations</a></li>
-                            <li><a class="dropdown-item" href="{% url 'category' slug='travel-tips' %}">Travel Tips</a></li>
-                            <li><a class="dropdown-item" href="{% url 'category' slug='accommodation' %}">Accommodation</a></li>
+                            <li><a class="dropdown-item" href="{% url 'category' category_slug='destinations' %}">Destinations</a></li>
+                            <li><a class="dropdown-item" href="{% url 'category' category_slug='travel-tips' %}">Travel Tips</a></li>
+                            <li><a class="dropdown-item" href="{% url 'category' category_slug='accommodation' %}">Accommodation</a></li>
                         </ul>
                     </li>
                     {% if user.is_authenticated %}
