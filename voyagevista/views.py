@@ -35,5 +35,9 @@ def post_detail(request, slug):
     View for displaying the details of a single post.
     """
     post = get_object_or_404(Post, slug=slug)
-    context = {'post': post}
+    comments = Comment.objects.filter(post=post, active=True)
+    context = {
+        'post': post,
+        'comments': comments
+    }
     return render(request, 'post_detail.html', context)
