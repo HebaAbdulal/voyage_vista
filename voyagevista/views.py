@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_list_or_404, get_object_or_404
 from django.views import generic
-from .models import Post, Category
+from .models import Post, Category, Comment
 from django.core.paginator import Paginator
 from .forms import CommentForm
 
