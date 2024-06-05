@@ -52,10 +52,9 @@ the field filters, the fields to be prepopulated, and the configuration for the 
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
-    """
-    Admin configuration for the Category model.
-    """
     prepopulated_fields = {'slug': ('name',)}
+    list_display = ('name', 'slug')
+    search_fields = ('name',)
 
 
 @admin.register(Comment)
