@@ -57,6 +57,7 @@ class Post(models.Model):
     saves = models.ManyToManyField(User, related_name='blog_saves', blank=True)
     approved = models.BooleanField(default=False)
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, blank=True)
+    number_of_views = models.IntegerField(default=0)
 
 
     class Meta:
@@ -95,6 +96,7 @@ class Comment(models.Model):
     approved = models.BooleanField(default=False)
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name="commenter", default=1)
     email = models.EmailField()
+    active = models.BooleanField(default=True)
 
     class Meta:
         ordering = ['-created_on']
