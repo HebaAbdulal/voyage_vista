@@ -36,3 +36,7 @@ def post_detail(request, slug):
     """
     post = get_object_or_404(Post, slug=slug)
     comments = Comment.objects.filter(post=post, active=True)
+    
+    # Increment view count
+    post.number_of_views += 1
+    post.save()
