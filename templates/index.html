@@ -33,11 +33,12 @@
                             </a>
                             <hr>
                             <p class="card-category text-muted h6">{{ post.author|upper }} | {{ post.category.name|upper }}</p>
-                            <p class="card-text text-muted h6">{{ post.created_on }}</p>
-                            <p class="card-text text-muted h6">{{ post.created_on}} <i class="far fa-thumbs-up"></i> {{ post.number_of_likes }}</p>
-                            <p class="card-text text-muted h6">{{ post.created_on}} <i class="far fa-comment"></i> {{ post.number_of_comments }}</p>
-                            <p class="card-text text-muted h6">{{ post.created_on}} <i class="far fa-share"></i> {{ post.number_of_shares }}</p>
-                            <p class="card-text text-muted h6">{{ post.created_on}} <i class="far fa-save"></i> {{ post.number_of_saves }}</p>
+                            <p class="card-text text-muted h6">{{ post.created_on }}
+                                <i class="far fa-thumbs-up"></i> {{ post.number_of_likes }}
+                                <i class="far fa-comment"></i> {{ post.number_of_comments }}
+                                <i class="far fa-share"></i> {{ post.number_of_shares }}
+                                <i class="far fa-save"></i> {{ post.number_of_saves }}
+                            </p>
                         </div>
                     </div>
                 </div>

@@ -1,6 +1,7 @@
 from django.shortcuts import render, get_list_or_404
 from django.views import generic
 from .models import Post, Category
+from django.core.paginator import Paginator
 
 
 def category_view(request, category_slug=None):
