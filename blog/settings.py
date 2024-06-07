@@ -33,10 +33,10 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['8000-hebaabdulal-voyagevista-dzvyodd221d.ws-eu114.gitpod.io']
 ALLOWED_HOSTS = [
     'ckz8780-django-voyagevista-app-19845c20e94f.herokuapp.com',
-    '8000-hebaabdulal-voyagevista-dzvyodd221d.ws-eu114.gitpod.io'
+    '8000-hebaabdulal-voyagevista-dzvyodd221d.ws-eu114.gitpod.io',
+    '8000-hebaabdulal-voyagevista-soofkoyfind.ws-eu114.gitpod.io',
 ]
 
 
