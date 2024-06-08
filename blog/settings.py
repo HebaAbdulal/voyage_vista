@@ -39,6 +39,12 @@ ALLOWED_HOSTS = [
     '8000-hebaabdulal-voyagevista-soofkoyfind.ws-eu114.gitpod.io',
 ]
 
+CSRF_TRUSTED_ORIGINS = [
+    'http://8000-hebaabdulal-voyagevista-soofkoyfind.ws-eu114.gitpod.io',
+    'https://8000-hebaabdulal-voyagevista-soofkoyfind.ws-eu114.gitpod.io',
+]
+
+
 
 # Application definition
 
