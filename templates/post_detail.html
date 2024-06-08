@@ -34,6 +34,12 @@
                         <strong class="text-secondary"><i class="far fa-comments"></i> {{ comments.count }}</strong>
                     </div>
                     <div class="col-1">
+                        <strong class="text-secondary"><i class="far fa-share-square"></i> {{ post.number_of_shares }}</strong>
+                    </div>
+                    <div class="col-1">
+                        <strong class="text-secondary"><i class="far fa-bookmark"></i> {{ post.number_of_saves }}</strong>
+                    </div>
+                    <div class="col-1">
                         <strong class="text-secondary"><i class="far fa-eye"></i> {{ post.number_of_views }}</strong>
                     </div>
                 </div>
@@ -68,7 +74,7 @@
                 <form method="post">
                     {% csrf_token %}
                     {% crispy comment_form %}
-                    <button type="submit" class="btn btn-primary">Submit</button>
+                    <button type="submit" class="btn btn-custom">Submit</button>
                 </form>
             </div>
         </div>
