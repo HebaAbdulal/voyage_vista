@@ -1,4 +1,4 @@
-{% extends 'base.html' %} 
+{% extends 'base.html' %}
 {% block content %}
 {% load static %}
 {% load crispy_forms_tags %}
@@ -64,6 +64,7 @@
                     </p>
                     {{ comment.body|linebreaks }}
                 </div>
+                
                 {% endfor %}
             </div>
         </div>
@@ -71,14 +72,19 @@
             <div class="card-body">
                 <h3>Leave a comment:</h3>
                 <p>Posting as: {{ user.username }}</p>
-                <form method="post">
+                <form id="comment-form" method="POST" action="{% url 'post_detail' post.slug %}">
                     {% csrf_token %}
-                    {% crispy comment_form %}
-                    <button type="submit" class="btn btn-custom">Submit</button>
+                    {{ comment_form.as_p }}
+                    <button type="submit" id="submit-button">Submit</button>
                 </form>
+                
             </div>
         </div>
     </div>
+    <div id="comments-section">
+        <!-- New comments will appear here -->
+    </div>
+    
     {% else %}
     <div class="row">
         <div class="col-md-8 card mb-4 mt-3">
@@ -88,5 +94,64 @@
     </div>
     {% endif %}
 </div>
+
+<!-- Custom script for AJAX form submission -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    const csrftoken = getCookie('csrftoken');
+
+    $.ajaxSetup({
+        beforeSend: function(xhr, settings) {
+            if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            }
+        }
+    });
+
+    $(document).ready(function() {
+        $('#comment-form').on('submit', function(event) {
+            event.preventDefault();
+
+            var formData = $(this).serialize();
+
+            $.ajax({
+                type: 'POST',
+                url: $(this).attr('action'),
+                data: formData,
+                success: function(response) {
+                    $('#comments-section').append(
+                        '<div class="comments" style="padding: 10px;">' +
+                        '<p class="font-weight-bold">' +
+                        response.name + 
+                        '<span class="text-muted font-weight-normal">' + response.created_on + '</span> wrote:' +
+                        '</p>' +
+                        response.body.replace(/\n/g, '<br>') + 
+                        '</div>'
+                    );
+                    $('#comment-form')[0].reset();
+                },
+                error: function(xhr, errmsg, err) {
+                    console.log(xhr.status + ": " + xhr.responseText);
+                    alert('An error occurred. Please try again.');
+                }
+            });
+        });
+    });
+</script>
 
 {% endblock content %}
