@@ -1,5 +1,7 @@
 from django.shortcuts import render, get_list_or_404, get_object_or_404, redirect
 from django.views import generic
+from django.http import JsonResponse, HttpResponseRedirect
+from django.views.decorators.csrf import csrf_exempt
 from .models import Post, Category, Comment
 from django.core.paginator import Paginator
 from .forms import CommentForm
@@ -33,78 +35,59 @@ def category_view(request, category_slug=None):
 
 
 def post_detail(request, slug):
-    """
-    View for displaying the details of a single post.
-    """
     post = get_object_or_404(Post, slug=slug)
-    comments = Comment.objects.filter(post=post, active=True)
-    awaiting_comments = Comment.objects.filter(post=post, active=False, author=request.user) if request.user.is_authenticated else []
-    new_comment = None
-
-    # Increment view count
-    post.number_of_views += 1
-    post.save()
+    comments = Comment.objects.filter(post=post, approved=True)
+    awaiting_comments = Comment.objects.filter(post=post, approved=False, author=request.user)
+    comment_form = CommentForm(request.POST or None)
 
     if request.method == 'POST':
-        comment_form = CommentForm(data=request.POST)
         if comment_form.is_valid():
-            new_comment = comment_form.save(commit=False)
-            new_comment.post = post
-            if request.user.is_authenticated:
-                new_comment.author = request.user
-                new_comment.active = False  # Awaiting approval
-                new_comment.save()
-                messages.add_message(request, messages.INFO, 'Your comment is awaiting approval.')
-            else:
-                new_comment.active = True
-                new_comment.save()
-
-            if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            comment = comment_form.save(commit=False)
+            comment.post = post
+            comment.author = request.user
+            comment.save()
+            if request.is_ajax():
                 return JsonResponse({
-                    'author': new_comment.author.username,
-                    'created_on': new_comment.created_on.strftime('%Y-%m-%d %H:%M:%S'),
-                    'body': new_comment.body,
+                    'id': comment.id,
+                    'name': comment.author.username,
+                    'created_on': comment.created_on.strftime('%Y-%m-%d %H:%M:%S'),
+                    'body': comment.body
                 })
             else:
-                return redirect('post_detail', slug=post.slug)
-    else:
-        comment_form = CommentForm()
+                return HttpResponseRedirect(post.get_absolute_url())
 
     context = {
         'post': post,
         'comments': comments,
-        'new_comment': new_comment,
+        'awaiting_comments': awaiting_comments,
         'comment_form': comment_form,
     }
-    
-    if comments:
-        context['comment_id'] = comments.first().id  # Assigning comment ID if available
-    
     return render(request, 'post_detail.html', context)
 
-
-def delete_comment(request, comment_id):
-    comment = get_object_or_404(Comment, id=comment_id)
-    if request.user.is_authenticated and request.user == comment.author:
-        comment.delete()
-        return JsonResponse({'success': True})
-    return JsonResponse({'success': False})
-
+@csrf_exempt
 def edit_comment(request, comment_id):
-    comment = get_object_or_404(Comment, id=comment_id)
     if request.method == 'POST':
-        comment_form = CommentForm(request.POST, instance=comment)
-        if comment_form.is_valid():
-            comment_form.save()
-            return JsonResponse({'success': True})
-    else:
-        comment_form = CommentForm(instance=comment)
+        try:
+            comment = Comment.objects.get(id=comment_id, author=request.user)
+            new_body = request.POST.get('body')
+            if new_body:
+                comment.body = new_body
+                comment.save()
+                return JsonResponse({'success': True})
+        except Comment.DoesNotExist:
+            return JsonResponse({'success': False, 'error': 'Comment not found'})
+    return JsonResponse({'success': False, 'error': 'Invalid request'})
 
-    context = {
-        'comment': comment,
-        'comment_form': comment_form,
-    }
-    return render(request, 'edit_comment.html', context)
+@csrf_exempt
+def delete_comment(request, comment_id):
+    if request.method == 'POST':
+        try:
+            comment = Comment.objects.get(id=comment_id, author=request.user)
+            comment.delete()
+            return JsonResponse({'success': True})
+        except Comment.DoesNotExist:
+            return JsonResponse({'success': False, 'error': 'Comment not found'})
+    return JsonResponse({'success': False, 'error': 'Invalid request'})
 
 
 

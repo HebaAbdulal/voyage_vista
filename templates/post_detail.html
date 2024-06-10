@@ -89,14 +89,12 @@
                     {{ comment_form.as_p }}
                     <button type="submit" id="submit-button">Submit</button>
                 </form>
-                
             </div>
         </div>
     </div>
     <div id="comments-section">
         <!-- New comments will appear here -->
     </div>
-    
     {% else %}
     <div class="row">
         <div class="col-md-8 card mb-4 mt-3">
@@ -105,6 +103,25 @@
         </div>
     </div>
     {% endif %}
+</div>
+
+<!-- Delete comment confirmation modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">Delete comment?</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to delete your comment? This action cannot be undone.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <a id="deleteConfirm" href="#" class="btn btn-danger">Delete</a>
+            </div>
+        </div>
+    </div>
 </div>
 
 <!-- Custom script for AJAX form submission -->
@@ -138,9 +155,7 @@
     $(document).ready(function() {
         $('#comment-form').on('submit', function(event) {
             event.preventDefault();
-
             var formData = $(this).serialize();
-
             $.ajax({
                 type: 'POST',
                 url: $(this).attr('action'),
@@ -169,30 +184,29 @@
     });
 
     function editComment(commentId) {
-    console.log('Editing comment with ID:', commentId);
-    var newBody = prompt("Edit your comment:");
-    if (newBody) {
-        $.ajax({
-            url: '/edit_comment/' + commentId + '/',
-            type: 'POST',
-            data: {
-                'csrfmiddlewaretoken': csrftoken,
-                'body': newBody
-            },
-            success: function(response) {
-                if(response.success) {
-                    location.reload();
-                } else {
-                    alert('An error occurred while editing the comment.');
+        var newBody = prompt("Edit your comment:");
+        if (newBody) {
+            $.ajax({
+                url: '/edit_comment/' + commentId + '/',
+                type: 'POST',
+                data: {
+                    'csrfmiddlewaretoken': csrftoken,
+                    'body': newBody
+                },
+                success: function(response) {
+                    if(response.success) {
+                        location.reload();
+                    } else {
+                        alert('An error occurred while editing the comment.');
+                    }
+                },
+                error: function(xhr, errmsg, err) {
+                    console.log(xhr.status + ": " + xhr.responseText);
+                    alert('An error occurred. Please try again.');
                 }
-            },
-            error: function(xhr, errmsg, err) {
-                console.log(xhr.status + ": " + xhr.responseText);
-                alert('An error occurred. Please try again.');
-            }
-        });
+            });
+        }
     }
-}
 
     function deleteComment(commentId) {
         if(confirm("Are you sure you want to delete this comment?")) {
@@ -217,5 +231,4 @@
         }
     }
 </script>
-
-{% endblock content %}
+{% endblock %}
