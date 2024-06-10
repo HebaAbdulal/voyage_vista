@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Comment</title>
+</head>
+<body>
+    <h1>Edit Comment</h1>
+    {% if comment.id %}
+        <p>Comment ID: {{ comment.id }}</p> <!-- Debug print statement -->
+        <form method="post" action="{% url 'edit_comment' comment.id %}">
+            {% csrf_token %}
+            <!-- Your form fields for editing the comment -->
+            <textarea name="body" rows="4" cols="50">{{ comment.body }}</textarea>
+            <button type="submit">Submit</button>
+        </form>
+    {% else %}
+        <p>Error: Comment ID is not defined.</p>
+    {% endif %}
+</body>
+</html>
