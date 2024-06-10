@@ -38,6 +38,7 @@ def post_detail(request, slug):
     """
     post = get_object_or_404(Post, slug=slug)
     comments = Comment.objects.filter(post=post, active=True)
+    awaiting_comments = Comment.objects.filter(post=post, active=False, author=request.user) if request.user.is_authenticated else []
     new_comment = None
 
     # Increment view count
@@ -50,7 +51,7 @@ def post_detail(request, slug):
             new_comment = comment_form.save(commit=False)
             new_comment.post = post
             if request.user.is_authenticated:
-                new_comment.name = request.user.username
+                new_comment.author = request.user
                 new_comment.active = False  # Awaiting approval
                 new_comment.save()
                 messages.add_message(request, messages.INFO, 'Your comment is awaiting approval.')
@@ -60,7 +61,7 @@ def post_detail(request, slug):
 
             if request.headers.get('x-requested-with') == 'XMLHttpRequest':
                 return JsonResponse({
-                    'name': new_comment.name,
+                    'author': new_comment.author.username,
                     'created_on': new_comment.created_on.strftime('%Y-%m-%d %H:%M:%S'),
                     'body': new_comment.body,
                 })
@@ -75,4 +76,35 @@ def post_detail(request, slug):
         'new_comment': new_comment,
         'comment_form': comment_form,
     }
+    
+    if comments:
+        context['comment_id'] = comments.first().id  # Assigning comment ID if available
+    
     return render(request, 'post_detail.html', context)
+
+
+def delete_comment(request, comment_id):
+    comment = get_object_or_404(Comment, id=comment_id)
+    if request.user.is_authenticated and request.user == comment.author:
+        comment.delete()
+        return JsonResponse({'success': True})
+    return JsonResponse({'success': False})
+
+def edit_comment(request, comment_id):
+    comment = get_object_or_404(Comment, id=comment_id)
+    if request.method == 'POST':
+        comment_form = CommentForm(request.POST, instance=comment)
+        if comment_form.is_valid():
+            comment_form.save()
+            return JsonResponse({'success': True})
+    else:
+        comment_form = CommentForm(instance=comment)
+
+    context = {
+        'comment': comment,
+        'comment_form': comment_form,
+    }
+    return render(request, 'edit_comment.html', context)
+
+
+
