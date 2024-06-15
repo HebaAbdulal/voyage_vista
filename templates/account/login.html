@@ -1,38 +1,39 @@
 {% extends "base.html" %}
 {% load i18n %}
 
-{% block title %}{% trans "Login" %}{% endblock %}
+{% block title %}{% trans "Sign In" %}{% endblock %}
 
 {% block content %}
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card p-4 shadow-sm">
-                <h2 class="card-title text-center mb-4">{% trans "Login to Your Account" %}</h2>
-                <p class="text-center">
-                    {% trans "Don't have an account? " %}
-                    <a href="{{ signup_url }}" class="text-decoration-none">{% trans "Sign Up" %}</a>
-                    {% trans " first." %}
-                </p>
-                
-                {% if form.errors %}
-                <div class="alert alert-danger" role="alert">
-                    {% trans "Invalid username or password. Please try again." %}
-                </div>
-                {% endif %}
+<div class="container">
+  <div class="row justify-content-center mt-5">
+    <div class="col-md-6">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h1 class="card-title text-center mb-4">{% trans "Sign In" %}</h1>
 
-                <form method="POST" action="{% url 'account_login' %}">
-                    {% csrf_token %}
-                    {{ form.as_p }}
-                    {% if redirect_field_value %}
-                    <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
-                    {% endif %}
-                    <div class="d-grid gap-2">
-                        <button class="btn btn-custom btn-block" type="submit">{% trans "Login" %}</button>
-                    </div>
-                </form>
-            </div>
+          <p class="card-text text-center">
+            {% blocktrans %}If you don't have an account, then please
+            <a href="{{ signup_url }}" class="text-decoration-none">SIGN UP</a> first.{% endblocktrans %}
+          </p>
+
+          {% if form.errors %}
+          <div class="alert alert-danger" role="alert">
+            {% trans "Invalid username or password. Please try again." %}
+          </div>
+          {% endif %}
+
+          <form class="form" method="POST" action="{% url 'account_login' %}">
+            {% csrf_token %}
+            {{ form.as_p }}
+            {% if redirect_field_value %}
+            <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+            {% endif %}
+            <!-- Apply the custom style for the Sign In button -->
+            <button class="btn btn-custom w-50 mb-2" type="submit">{% trans "Sign In" %}</button>
+          </form>
         </div>
+      </div>
     </div>
+  </div>
 </div>
 {% endblock %}
