@@ -1,12 +1,11 @@
 from django.shortcuts import render, get_list_or_404, get_object_or_404, redirect
 from django.views import generic
-from django.http import JsonResponse, HttpResponseRedirect
-from django.views.decorators.csrf import csrf_exempt
 from .models import Post, Category, Comment
 from django.core.paginator import Paginator
 from .forms import CommentForm
 from django.http import JsonResponse
 from django.contrib import messages
+
 
 
 def category_view(request, category_slug=None):
@@ -88,6 +87,3 @@ def delete_comment(request, comment_id):
         except Comment.DoesNotExist:
             return JsonResponse({'success': False, 'error': 'Comment not found'})
     return JsonResponse({'success': False, 'error': 'Invalid request'})
-
-
-

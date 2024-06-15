@@ -16,6 +16,7 @@ import os
 import dj_database_url
 if os.path.isfile('env.py'):
     import env
+from django.contrib.messages import constants as messages
 
 
 development = os.environ.get('DEVELOPMENT', False)
@@ -35,13 +36,14 @@ DEBUG = True
 
 ALLOWED_HOSTS = [
     'ckz8780-django-voyagevista-app-19845c20e94f.herokuapp.com',
-    '8000-hebaabdulal-voyagevista-dzvyodd221d.ws-eu114.gitpod.io',
     '8000-hebaabdulal-voyagevista-soofkoyfind.ws-eu114.gitpod.io',
+    '8000-hebaabdulal-voyagevista-r2afsac2cai.ws-eu114.gitpod.io',
 ]
 
 CSRF_TRUSTED_ORIGINS = [
-    'http://8000-hebaabdulal-voyagevista-soofkoyfind.ws-eu114.gitpod.io',
-    'https://8000-hebaabdulal-voyagevista-soofkoyfind.ws-eu114.gitpod.io',
+    "https://*.gitpod.io",
+    "https://*.codeanyapp.com",
+    "https://*.herokuapp.com"
 ]
 
 
@@ -106,6 +108,15 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'blog.wsgi.application'
+
+
+MESSAGE_TAGS = {
+    messages.DEBUG: 'debug',
+    messages.INFO: 'info',
+    messages.SUCCESS: 'success',
+    messages.WARNING: 'warning',
+    messages.ERROR: 'danger',
+}
 
 
 # Database
