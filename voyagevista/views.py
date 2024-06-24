@@ -112,22 +112,41 @@ class PostDetailView(View):
             'is_post_user': (request.user.id == selected_post.author.id),
         })
 
-def edit_comment(request, id):
-    comment = get_object_or_404(Comment, id=id, author=request.user)
-    post = comment.post
-    if request.method == 'POST':
-        comment_form = CommentForm(request.POST, instance=comment)
-        if comment_form.is_valid():
-            comment_form.save()
-            messages.add_message(request, messages.SUCCESS, 'Your comment has been updated.')
-            return redirect('post_detail', slug=post.slug)
-    else:
-        comment_form = CommentForm(instance=comment)
-    
-    return render(request, 'edit_comment.html', {
-        'comment_form': comment_form,
-        'post': post
-    })
+@method_decorator(login_required, name='dispatch')
+class CommentEdit(View):
+    def get(self, request, slug=None, pk=None, *args, **kwargs):
+        selected_post = get_object_or_404(Post, slug=slug, status=1)
+        comment_queryset = selected_post.comments.filter(pk=pk)
+        selected_comment = get_object_or_404(comment_queryset)
+        if request.user.id != selected_comment.author.id:
+            messages.error(request, 'You do not have permission to edit this comment.')
+            return HttpResponseRedirect(reverse("post_detail", args=[slug]))
+        return render(request, "update_comment.html", {
+            "status_message": "",
+            "post": selected_post,
+            "comments": selected_comment,
+            "form": CommentForm(instance=selected_comment),
+        })
+
+    def post(self, request, slug=None, pk=None, *args, **kwargs):
+        selected_post = get_object_or_404(Post, slug=slug, status=1)
+        comment_queryset = selected_post.comments.filter(pk=pk)
+        selected_comment = get_object_or_404(comment_queryset)
+        if request.user.id != selected_comment.author.id:
+            messages.error(request, 'You do not have permission to edit this comment.')
+            return HttpResponseRedirect(reverse("post_detail", args=[slug]))
+        comment_form_instance = CommentForm(data=request.POST, instance=selected_comment)
+        if comment_form_instance.is_valid():
+            mycomment = comment_form_instance.save(commit=False)
+            mycomment.save()
+            status_message = "Saved Successfully"
+        else:
+            status_message = "Invalid Input!"
+        return render(request, "update_comment.html", {
+            "form": comment_form_instance,
+            "status_message": status_message,
+            "post": selected_post,
+        })
 
 def delete_comment(request, id):
     comment = get_object_or_404(Comment, id=id, author=request.user)
