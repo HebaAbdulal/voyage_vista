@@ -148,12 +148,28 @@ class CommentEdit(View):
             "post": selected_post,
         })
 
-def delete_comment(request, id):
-    comment = get_object_or_404(Comment, id=id, author=request.user)
-    post = comment.post
-    if request.method == 'POST':
-        comment.delete()
-        messages.add_message(request, messages.SUCCESS, 'Your comment has been deleted.')
-        return redirect('post_detail', slug=post.slug)
-    
-    return render(request, 'delete_comment.html', {'comment': comment, 'post': post})
+@method_decorator(login_required, name='dispatch')
+class CommentDeleteView(View):
+    def get(self, request, slug=None, pk=None, *args, **kwargs):
+        selected_post = get_object_or_404(Post, slug=slug, status=1)
+        comment_queryset = selected_post.comments.filter(pk=pk)
+        selected_comment = get_object_or_404(comment_queryset)
+        if request.user.id != selected_comment.author.id:
+            messages.error(request, 'You do not have permission to delete this comment.')
+            return HttpResponseRedirect(reverse("post_detail", args=[slug]))
+        if selected_comment.delete():
+            messages.success(request, "Comment Deleted Successfully")
+            return redirect("post_detail", slug=slug)
+        else:
+            messages.error(request, "Comment Deletion Failed!")
+        approved_comments = selected_post.comments.filter(approved=True).order_by("-created_on")
+        is_liked = selected_post.likes.filter(id=request.user.id).exists()
+        return render(request, "post_detail.html", {
+            "is_post_user": (request.user.id == selected_post.author.id),
+            "status_message": "Comment Deletion Failed!",
+            "post": selected_post,
+            "comments": approved_comments,
+            "commented": False,
+            "liked": is_liked,
+            "comment_form": CommentForm(),
+        })
