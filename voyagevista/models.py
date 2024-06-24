@@ -104,4 +104,10 @@ class Comment(models.Model):
     def __str__(self):
         return f"comment {self.body} by {self.author.username}"
 
+    def number_of_comments(self):
+        """
+        Returns the total number of comments for the post.
+        """
+        return self.comments.count()
+
 

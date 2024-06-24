@@ -17,16 +17,10 @@
                     <img src="{{ post.featured_image.url }}" width="100%">
                 {% endif %}
             </div>
-            {% if messages %}
-                <div id="approval-message">
-                    {% for message in messages %}
-                        <div class="alert alert-{{ message.tags }}">{{ message }}</div>
-                    {% endfor %}
-                </div>
-            {% endif %}
         </div>
     </div>
 </div>
+
 <div class="container">
     <div class="row">
         <div class="col card mb-4 mt-3 left top">
@@ -34,95 +28,154 @@
                 <p class="card-text">{{ post.content|safe }}</p>
                 <div class="row">
                     <div class="col-1">
-                        <strong class="text-secondary"><i class="far fa-heart"></i> {{ post.number_of_likes }}</strong>
-                    </div>
-                    <div class="col-1">
-                        <strong class="text-secondary"><i class="far fa-comments"></i> {{ comments.count }}</strong>
-                    </div>
-                    <div class="col-1">
-                        <strong class="text-secondary"><i class="far fa-share-square"></i> {{ post.number_of_shares }}</strong>
-                    </div>
-                    <div class="col-1">
-                        <strong class="text-secondary"><i class="far fa-bookmark"></i> {{ post.number_of_saves }}</strong>
-                    </div>
-                    <div class="col-1">
+                        <!-- Display views -->
+                        {% if user == post.owner or user.is_superuser %}
                         <strong class="text-secondary"><i class="far fa-eye"></i> {{ post.number_of_views }}</strong>
+                        <strong class="text-secondary"><i class="far fa-bookmark"></i> {{ post.number_of_saves }}</strong>
+                        {% endif %}
+                    </div>
+
+                    <div class="col-1">
+                        <!-- Display likes -->
+                        {% if user.is_authenticated %}
+                        <form class="d-inline" action="{% url 'post_like' post.slug %}" method="POST">
+                            {% csrf_token %}
+                            {% if liked %}
+                            <button type="submit" name="post_id" value="{{post.slug}}" class="btn-like"><i class="fas fa-heart"></i></button>
+                            {% else %}
+                            <button type="submit" name="post_id" value="{{post.slug}}" class="btn-like"><i class="far fa-heart"></i></button>
+                            {% endif %}
+                        </form>
+                        {% else %}
+                        <span class="text-secondary"><i class="far fa-heart"></i></span>
+                        <span class="text-secondary"><i class="far fa-comments"></i></span>
+                        {% endif %}
+                        <span class="text-secondary">{{ post.number_of_likes }}</span>
+                        <span class="text-secondary">{{post.number_of_comments}}</span>
+                    </div>
+
+                    <div class="col-1">
+                        <!-- Display comments count -->
+                        {% with comments.count as total_comments %}
+                        <strong class="text-secondary"><i class="far fa-comments"></i> {{ total_comments }}</strong>
+                        {% endwith %}
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
     <div class="row">
         <div class="col">
             <hr>
         </div>
     </div>
-    {% if user.is_authenticated %}
+
     <div class="row">
         <div class="col-md-8 card mb-4 mt-3">
             <h3>Comments:</h3>
             <div class="card-body">
-                {% for comment in comments %}
+                <!-- Display pending comments first -->
+                {% if awaiting_comments %}
+                    <h4>Your Pending Comments</h4>
+                    {% for comment in awaiting_comments %}
+                        <div class="comments" style="padding: 10px;">
+                            <p class="font-weight-bold">{{ comment.author.username }} <span class="text-muted font-weight-normal">{{ comment.created_on }}</span> wrote:</p>
+                            {{ comment.body|linebreaks }}
+                            <p class="text-warning">Your comment is awaiting approval.</p>
+                            <div id="comment-actions-{{ comment.id }}" class="comment-actions">
+                                <button onclick="toggleEditForm('{{ comment.id }}')" class="btn btn-custom btn-sm mr-1">Edit</button>
+                                <form method="post" action="{% url 'delete_comment' post.slug comment.id %}" class="d-inline">
+                                    {% csrf_token %}
+                                    <button type="submit" name="delete_comment" class="btn btn-danger btn-sm">Delete</button>
+                                </form>
+                            </div>
+                            <form method="post" action="{% url 'edit_comment' post.slug comment.id %}" class="edit-form" id="edit-form-{{ comment.id }}" style="display:none;">
+                                {% csrf_token %}
+                                <textarea name="content" class="form-control">{{ comment.body }}</textarea>
+                                <div style="margin-top: 5px;">
+                                    <button type="submit" name="edit_comment" class="btn btn-custom btn-sm mr-1">Submit Edit</button>
+                                    <button type="button" onclick="toggleEditForm('{{ comment.id }}')" class="btn btn-danger btn-sm">Cancel</button>
+                                </div>
+                            </form>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+
+                <!-- Display approved comments -->
+                {% for comment_info in comments %}
                     <div class="comments" style="padding: 10px;">
                         <p class="font-weight-bold">
-                            {{ comment.author.username }}
-                            <span class="text-muted font-weight-normal">{{ comment.created_on }}</span> wrote:
+                            {{ comment_info.mycomment.author.username }}
+                            <span class="text-muted font-weight-normal">{{ comment_info.mycomment.created_on }}</span> wrote:
                         </p>
-                        {{ comment.body|linebreaks }}
-                        <form method="post" action="">
-                            {% csrf_token %}
-                            <input type="hidden" name="comment_id" value="{{ comment.id }}">
-                            <button type="submit" name="edit_comment" class="btn btn-sm btn-primary">Edit</button>
-                            <button type="submit" name="delete_comment" class="btn btn-sm btn-danger">Delete</button>
-                        </form>
+                        {{ comment_info.mycomment.content|linebreaks }}
+                        {% if comment_info.is_owner %}
+                            <div class>
+                                <button onclick="document.getElementById('edit-form-{{ comment_info.mycomment.id }}').style.display='block'" class="btn btn-sm btn-custom">Edit</button>
+                                <form method="post" action="{% url 'edit_comment' post.slug comment_info.mycomment.id %}" class="d-inline">
+                                    {% csrf_token %}
+                                    <div id="edit-form-{{ comment_info.mycomment.id }}" style="display:none;">
+                                        <textarea name="content" class="form-control">{{ comment_info.mycomment.content }}</textarea>
+                                        <button type="submit" name="edit_comment" class="btn btn-custom btn-sm">Submit Edit</button>
+                                    </div>
+                                </form>
+                                <form method="post" action="{% url 'delete_comment' post.slug comment_info.mycomment.id %}" class="d-inline">
+                                    {% csrf_token %}
+                                    <button type="submit" name="delete_comment" class="btn btn-danger btn-sm">Delete</button>
+                                </form>
+                            </div>
+                        {% endif %}
                     </div>
                 {% endfor %}
-
-                {% for comment in awaiting_comments %}
-                    <div class="comments" style="padding: 10px; background-color: #f8f9fa;">
-                        <p class="font-weight-bold">
-                            {{ comment.author.username }}
-                            <span class="text-muted font-weight-normal">{{ comment.created_on }}</span> wrote:
-                        </p>
-                        {{ comment.body|linebreaks }}
-                        <p class="text-warning">Your comment is awaiting approval.</p>
-                        <form method="post" action="">
-                            {% csrf_token %}
-                            <input type="hidden" name="comment_id" value="{{ comment.id }}">
-                            <button type="submit" name="edit_comment" class="btn btn-sm btn-primary">Edit</button>
-                            <button type="submit" name="delete_comment" class="btn btn-sm btn-danger">Delete</button>
-                        </form>
-                    </div>
-                {% endfor %}
-
-                {% if new_comment %}
-                    <div class="alert alert-info">Your comment is awaiting approval.</div>
-                {% endif %}
             </div>
         </div>
 
         <div class="col-md-4 card mb-4 mt-3">
             <div class="card-body">
-                <h3>Leave a comment:</h3>
-                <p>Posting as: {{ user.username }}</p>
-                <form id="comment-form" method="POST" action="{% url 'post_detail' post.slug %}">
-                    {% csrf_token %}
-                    {{ comment_form|crispy }}
-                    <button type="submit" class="btn btn-custom">Submit</button>
-                </form>
+                {% if commented %}
+                    <div class="alert alert-success" role="alert">
+                        Your comment is awaiting approval
+                    </div>
+                {% else %}
+                    {% if user.is_authenticated %}
+                        <h3>Leave a comment:</h3>
+                        <p>Posting as: {{ user.username }}</p>
+                        <form method="post" action="{% url 'post_detail' post.slug %}" style="margin-top: 1.3em;">
+                            {% csrf_token %}
+                            {{ comment_form|crispy }}
+                            <button type="submit" class="btn btn-custom">Submit</button>
+                        </form>
+                    {% else %}
+                        <p>Please <a href="{% url 'account_login' %}">log in</a> or <a href="{% url 'account_signup' %}">sign up</a> to leave a comment.</p>
+                    {% endif %}
+                {% endif %}
             </div>
         </div>
     </div>
-    <div id="comments-section">
-        <!-- New comments will appear here -->
-    </div>
-    {% else %}
-    <div class="row">
-        <div class="col-md-8 card mb-4 mt-3">
-            <h3>Comments:</h3>
-            <p class="text-end">Please <a href="{% url 'account_login' %}">log in</a> or <a href="{% url 'account_signup' %}">sign up</a> to leave a comment.</p>
+
+    <!-- Display messages -->
+    {% if messages %}
+        <div id="approval-message">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+            {% endfor %}
         </div>
-    </div>
     {% endif %}
 </div>
+
+<script>
+    function toggleEditForm(commentId) {
+        var editForm = document.getElementById('edit-form-' + commentId);
+        var commentActions = document.getElementById('comment-actions-' + commentId);
+
+        if (editForm.style.display === 'none') {
+            editForm.style.display = 'block';
+            commentActions.style.display = 'none';
+        } else {
+            editForm.style.display = 'none';
+            commentActions.style.display = 'block';
+        }
+    }
+</script>
 {% endblock %}
