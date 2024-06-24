@@ -173,3 +173,13 @@ class CommentDeleteView(View):
             "liked": is_liked,
             "comment_form": CommentForm(),
         })
+
+@method_decorator(login_required, name='dispatch')
+class PostLike(View):
+    def post(self, request, slug):
+        selected_post = get_object_or_404(Post, slug=slug)
+        if selected_post.likes.filter(id=request.user.id).exists():
+            selected_post.likes.remove(request.user)
+        else:
+            selected_post.likes.add(request.user)
+        return HttpResponseRedirect(reverse("post_detail", args=[slug]))
