@@ -38,9 +38,11 @@ ALLOWED_HOSTS = [
     'ckz8780-django-voyagevista-app-19845c20e94f.herokuapp.com',
     '8000-hebaabdulal-voyagevista-soofkoyfind.ws-eu114.gitpod.io',
     '8000-hebaabdulal-voyagevista-r2afsac2cai.ws-eu114.gitpod.io',
+    '8000-hebaabdulal-voyagevista-w73x1bwg780.ws.codeinstitute-ide.net',
 ]
 
 CSRF_TRUSTED_ORIGINS = [
+    'https://8000-hebaabdulal-voyagevista-w73x1bwg780.ws.codeinstitute-ide.net',
     "https://*.gitpod.io",
     "https://*.codeanyapp.com",
     "https://*.herokuapp.com"
