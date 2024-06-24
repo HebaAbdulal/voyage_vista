@@ -38,58 +38,79 @@ def category_view(request, category_slug=None):
     return render(request, 'index.html', context)
 
 
-def post_detail(request, slug):
-    """
-    View for displaying the details of a single post.
-    """
-    post = get_object_or_404(Post, slug=slug)
-    comments = post.comments.filter(active=True)
-    awaiting_comments = post.comments.filter(active=False, author=request.user)
-    new_comment = None
+class PostDetailView(View):
+    def get(self, request, slug):
+        selected_post = get_object_or_404(Post, slug=slug)
+        selected_post.number_of_views += 1  # Increment the number of views
+        selected_post.save()
+        
+        approved_comments = selected_post.comments.filter(approved=True)
+        pending_comments = []
 
-    # Increment view count
-    post.number_of_views += 1
-    post.save()
+        if request.user.is_authenticated:
+            pending_comments = selected_post.comments.filter(approved=False, author=request.user)
 
-    if request.method == 'POST':
+        is_liked = selected_post.likes.filter(id=request.user.id).exists()
+
+        comments_with_info = []
+        for comment in approved_comments:
+            is_owner = comment.author.username.lower() == request.user.username.lower()
+            comments_with_info.append({"mycomment": comment, "is_owner": is_owner})
+
+        comment_form_instance = CommentForm()
+        return render(request, 'post_detail.html', {
+            'post': selected_post,
+            'comments': comments_with_info,
+            'awaiting_comments': pending_comments,
+            'comment_form': comment_form_instance,
+            'liked': is_liked,
+            'is_post_user': (request.user.id == selected_post.author.id),
+        })
+
+    def post(self, request, slug):
+        selected_post = get_object_or_404(Post, slug=slug)
+        approved_comments = selected_post.comments.filter(approved=True)
+
         if 'edit_comment' in request.POST:
             comment_id = request.POST.get('comment_id')
-            comment = get_object_or_404(Comment, id=comment_id, author=request.user)
-            comment_form = CommentForm(request.POST, instance=comment)
-            if comment_form.is_valid():
-                comment_form.save()
-                messages.add_message(request, messages.SUCCESS, 'Your comment has been updated.')
-            return redirect('post_detail', slug=slug)
+            selected_comment = get_object_or_404(Comment, id=comment_id)
+            comment_form_instance = CommentForm(request.POST, instance=selected_comment)
+            if comment_form_instance.is_valid():
+                comment_form_instance.save()
+                messages.success(request, 'Comment updated successfully.')
+            else:
+                messages.error(request, 'Error updating comment.')
+
         elif 'delete_comment' in request.POST:
             comment_id = request.POST.get('comment_id')
-            comment = get_object_or_404(Comment, id=comment_id, author=request.user)
-            comment.delete()
-            messages.add_message(request, messages.SUCCESS, 'Your comment has been deleted.')
-            return redirect('post_detail', slug=slug)
-        else:
-            comment_form = CommentForm(data=request.POST)
-            if comment_form.is_valid():
-                new_comment = comment_form.save(commit=False)
-                new_comment.post = post
-                if request.user.is_authenticated:
-                    new_comment.author = request.user
-                    new_comment.active = False  # Awaiting approval
-                    new_comment.save()
-                    messages.add_message(request, messages.INFO, 'Your comment is awaiting approval.')
-                return redirect('post_detail', slug=slug)
-    else:
-        comment_form = CommentForm()
+            selected_comment = get_object_or_404(Comment, id=comment_id)
+            selected_comment.delete()
+            messages.success(request, 'Comment deleted successfully.')
 
-    return render(request, 'post_detail.html', {
-        'post': post,
-        'comments': comments,
-        'awaiting_comments': awaiting_comments,
-        'new_comment': new_comment,
-        'comment_form': comment_form,
-        'number_of_likes': post.number_of_likes,
-        'number_of_saves': post.number_of_saves,
-        'number_of_shares': post.number_of_shares,
-    })
+        else:
+            comment_form_instance = CommentForm(request.POST)
+            if comment_form_instance.is_valid():
+                comment = comment_form_instance.save(commit=False)
+                comment.author = request.user
+                comment.post = selected_post
+                comment.save()
+                messages.success(request, 'Your comment has been submitted for approval.')
+                return HttpResponseRedirect(reverse('post_detail', args=[slug]))
+
+        comments_with_info = []
+        for comment in approved_comments:
+            is_owner = comment.author.username.lower() == request.user.username.lower()
+            comments_with_info.append({"mycomment": comment, "is_owner": is_owner})
+
+        is_liked = selected_post.likes.filter(id=request.user.id).exists()
+
+        return render(request, 'post_detail.html', {
+            'post': selected_post,
+            'comments': comments_with_info,
+            'comment_form': comment_form_instance,
+            'liked': is_liked,
+            'is_post_user': (request.user.id == selected_post.author.id),
+        })
 
 def edit_comment(request, id):
     comment = get_object_or_404(Comment, id=id, author=request.user)
