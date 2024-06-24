@@ -140,3 +140,21 @@ body {
     background: transparent;
     border: none;
 }
+
+.btn-custom {
+    color: #21a1a1;
+}
+
+.edit-form {
+    margin-top: 10px; /* Adjust margin as needed */
+}
+
+.edit-form textarea {
+    width: 100%;
+    resize: vertical; /* Allow vertical resizing of textarea */
+    /* Add more styles as needed */
+}
+
+.edit-form .btn-group {
+    margin-top: 5px; /* Adjust margin for buttons */
+}
