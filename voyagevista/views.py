@@ -1,10 +1,15 @@
-from django.shortcuts import render, get_list_or_404, get_object_or_404, redirect
+from django.shortcuts import render, get_object_or_404, redirect
 from django.views import generic
 from .models import Post, Category, Comment
 from django.core.paginator import Paginator
 from .forms import CommentForm
 from django.http import JsonResponse
 from django.contrib import messages
+from django.views import View
+from django.contrib.auth.decorators import login_required
+from django.http import HttpResponseRedirect
+from django.urls import reverse
+from django.utils.decorators import method_decorator
 
 
 
