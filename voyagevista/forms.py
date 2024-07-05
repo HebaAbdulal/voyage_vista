@@ -1,6 +1,6 @@
 from django import forms
-from .models import Comment
-from .models import Post
+from .models import Comment, Post, Rating
+
 
 class CommentForm(forms.ModelForm):
     """
@@ -17,3 +17,11 @@ class PostForm(forms.ModelForm):
     class Meta:
         model = Post
         fields = ['title', 'featured_image', 'content', 'category', 'excerpt']
+
+class RatingForm(forms.ModelForm):
+    """
+    Form class for handling rating submissions.
+    """
+    class Meta:
+        model = Rating
+        fields = ['rating']
