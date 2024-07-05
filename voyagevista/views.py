@@ -237,3 +237,14 @@ class DeletePostView(View):
         else:
             messages.error(request, 'You do not have permission to delete this post.')
             return HttpResponseRedirect(reverse("post_detail", args=[slug]))
+
+class MyLikesView(LoginRequiredMixin, ListView):
+    """
+    View class to display a list of posts that the current user has liked.
+    """
+    model = Post
+    template_name = 'my_likes.html'
+    context_object_name = 'liked_posts'
+
+    def get_queryset(self):
+        return self.request.user.blog_likes.all()
