@@ -259,3 +259,14 @@ class MyCommentsView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         return self.request.user.commenter.all()
+
+class MyBookmarksView(LoginRequiredMixin, TemplateView):
+    """
+    View class to display a list of posts that current user has bookmarked.
+    """
+    template_name = 'my_bookmarks.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['user_bookmarks'] = self.request.user.blog_saves.all()
+        return context
