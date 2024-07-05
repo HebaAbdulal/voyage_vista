@@ -158,3 +158,9 @@ body {
 .edit-form .btn-group {
     margin-top: 5px; /* Adjust margin for buttons */
 }
+
+.btn-bookmark {
+    color: #E84610;
+    border: none;
+    background: transparent;
+}
