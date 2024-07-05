@@ -283,3 +283,42 @@ class AddPostView(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         form.instance.author = self.request.user
         return super().form_valid(form)
+
+@login_required
+@csrf_exempt
+def rate_post(request, post_slug):
+    """
+    View function to handle rating of posts by authenticated users via JSON POST requests.
+    """
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            rating_value = data.get('rating')
+            
+            # Validate rating value
+            if rating_value is None or not (1 <= rating_value <= 5):
+                return JsonResponse({'success': False, 'error': 'Invalid rating value.'}, status=400)
+            
+            post = get_object_or_404(Post, slug=post_slug)
+            user = request.user
+
+            # Check if the user has already rated this post
+            rating, created = Rating.objects.get_or_create(user=user, post=post)
+            rating.rating = rating_value
+            rating.save()
+
+            # Calculate the new average rating
+            average_rating = Rating.objects.filter(post=post).aggregate(Avg('rating'))['rating__avg']
+            post.average_rating = average_rating
+            post.save()
+
+            return JsonResponse({'success': True})
+
+        except json.JSONDecodeError:
+            return JsonResponse({'success': False, 'error': 'Invalid JSON.'}, status=400)
+        except Post.DoesNotExist:
+            return JsonResponse({'success': False, 'error': 'Post not found.'}, status=404)
+        except Exception as e:
+            return JsonResponse({'success': False, 'error': str(e)}, status=500)
+
+    return JsonResponse({'success': False}, status=400)
