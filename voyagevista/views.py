@@ -113,6 +113,22 @@ class PostDetailView(View):
         })
 
 @method_decorator(login_required, name='dispatch')
+class PostBookmark(View):
+    """
+    View class to handle bookmarking/unbookmarking of posts by users.
+    """
+    def post(self, request, slug):
+        post = get_object_or_404(Post, slug=slug)
+        if post.saves.filter(id=request.user.id).exists():
+            post.saves.remove(request.user)
+            messages.success(request, 'Bookmark removed.')
+        else:
+            post.saves.add(request.user)
+            messages.success(request, 'Post bookmarked.')
+
+        return redirect('post_detail', slug=slug)
+
+@method_decorator(login_required, name='dispatch')
 class CommentEdit(View):
     def get(self, request, slug=None, pk=None, *args, **kwargs):
         selected_post = get_object_or_404(Post, slug=slug, status=1)
