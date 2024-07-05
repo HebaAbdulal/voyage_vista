@@ -1,16 +1,22 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views import generic
-from .models import Post, Category, Comment
+from .models import Post, Category, Comment, Rating
 from django.core.paginator import Paginator
-from .forms import CommentForm
+from .forms import CommentForm, PostForm, RatingForm
 from django.http import JsonResponse
+import json
 from django.contrib import messages
 from django.views import View
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from django.utils.decorators import method_decorator
-
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.generic import TemplateView, ListView, CreateView
+from django.contrib.auth.models import User
+from django.views.decorators.csrf import csrf_exempt, csrf_protect
+from django.db.models import Avg
+from django.db import IntegrityError
 
 
 def category_view(request, category_slug=None):

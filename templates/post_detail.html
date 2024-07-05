@@ -26,71 +26,73 @@
         <div class="col card mb-4 mt-3 left top">
             <div class="card-body">
                 <p class="card-text">{{ post.content|safe }}</p>
-                <div class="col">
-                    <!-- Display views and saves -->
-                    {% if user == post.owner or user.is_superuser %}
-                        <strong class="text-secondary"><i class="far fa-eye"></i> {{ post.number_of_views }}</strong>
-                        <strong class="text-secondary"><i class="far fa-bookmark"></i> {{ post.number_of_saves }}</strong>
-                    {% endif %}
-                    <!-- Display likes -->
-                    {% if user.is_authenticated %}
-                        <span class="text-secondary">{{ post.number_of_likes }}</span>
-                        <form class="d-inline" action="{% url 'post_like' post.slug %}" method="POST">
-                            {% csrf_token %}
-                            {% if liked %}
-                                <button type="submit" name="post_id" value="{{post.slug}}" class="btn-like"><i class="fas fa-heart"></i></button>
-                            {% else %}
-                                <button type="submit" name="post_id" value="{{post.slug}}" class="btn-like"><i class="far fa-heart"></i></button>
-                            {% endif %}
-                        </form>
-                        <span class="text-secondary">{{ post.number_of_saves }}</span>
-                        <form class="d-inline" action="{% url 'post_bookmark' post.slug %}" method="POST">
-                            {% csrf_token %}
-                            {% if is_bookmarked %}
-                                <button type="submit" name="post_id" value="{{post.slug}}" class="btn-bookmark"><i class="fas fa-bookmark"></i></button>
-                            {% else %}
-                                <button type="submit" name="post_id" value="{{post.slug}}" class="btn-bookmark"><i class="far fa-bookmark"></i></button>
-                            {% endif %}
-                        </form>
-                        <span class="text-secondary">{{ post.number_of_comments }}</span>
-                    {% else %}
-                        <span class="text-secondary"><i class="far fa-heart"></i></span>
-                        <span class="text-secondary"><i class="far fa-comments"></i></span>
-                        <span class="text-secondary"><i class="far fa-bookmark"></i></span>
-                    {% endif %}
-                    <span class="text-secondary">{{ post.number_of_comments }}</span>
-                    <!-- Display comments -->
-                    <span class="text-secondary"><i class="far fa-comments"></i></span> 
-                </div>
-                <!-- Rating Section -->
-                {% if user.is_authenticated %}
                 <div class="row">
-                    <div class="col-md-8 card mb-4 mt-3">
-                        <h3>Rate this post:</h3>
-                        <div class="card-body">
-                            <div class="rating-container">
-                                <span class="star" data-value="1">&#9733;</span>
-                                <span class="star" data-value="2">&#9733;</span>
-                                <span class="star" data-value="3">&#9733;</span>
-                                <span class="star" data-value="4">&#9733;</span>
-                                <span class="star" data-value="5">&#9733;</span>
+                    <div class="col">
+                        <!-- Display views and saves -->
+                        {% if user == post.owner or user.is_superuser %}
+                            <strong class="text-secondary"><i class="far fa-eye"></i> {{ post.number_of_views }}</strong>
+                            <strong class="text-secondary"><i class="far fa-bookmark"></i> {{ post.number_of_saves }}</strong>
+                        {% endif %}
+                        <!-- Display likes -->
+                        {% if user.is_authenticated %}
+                            <span class="text-secondary">{{ post.number_of_likes }}</span>
+                            <form class="d-inline" action="{% url 'post_like' post.slug %}" method="POST">
+                                {% csrf_token %}
+                                {% if liked %}
+                                    <button type="submit" name="post_id" value="{{post.slug}}" class="btn-like"><i class="fas fa-heart"></i></button>
+                                {% else %}
+                                    <button type="submit" name="post_id" value="{{post.slug}}" class="btn-like"><i class="far fa-heart"></i></button>
+                                {% endif %}
+                            </form>
+                            <span class="text-secondary">{{ post.number_of_saves }}</span>
+                            <form class="d-inline" action="{% url 'post_bookmark' post.slug %}" method="POST">
+                                {% csrf_token %}
+                                {% if is_bookmarked %}
+                                    <button type="submit" name="post_id" value="{{post.slug}}" class="btn-bookmark"><i class="fas fa-bookmark"></i></button>
+                                {% else %}
+                                    <button type="submit" name="post_id" value="{{post.slug}}" class="btn-bookmark"><i class="far fa-bookmark"></i></button>
+                                {% endif %}
+                            </form>
+                            <span class="text-secondary">{{ post.number_of_comments }}</span>
+                        {% else %}
+                            <span class="text-secondary"><i class="far fa-heart"></i></span>
+                            <span class="text-secondary"><i class="far fa-comments"></i></span>
+                            <span class="text-secondary"><i class="far fa-bookmark"></i></span>
+                        {% endif %}
+                        <span class="text-secondary">{{ post.number_of_comments }}</span>
+                        <!-- Display comments -->
+                        <span class="text-secondary"><i class="far fa-comments"></i></span> 
+                    </div>
+                    <!-- Rating Section -->
+                    {% if user.is_authenticated %}
+                    <div class="row">
+                        <div class="col-md-8 card mb-4 mt-3">
+                            <h3>Rate this post:</h3>
+                            <div class="card-body">
+                                <div class="rating-container">
+                                    <span class="star" data-value="1">&#9733;</span>
+                                    <span class="star" data-value="2">&#9733;</span>
+                                    <span class="star" data-value="3">&#9733;</span>
+                                    <span class="star" data-value="4">&#9733;</span>
+                                    <span class="star" data-value="5">&#9733;</span>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                {% else %}
+                    {% else %}
+                        <div class="row">
+                            <div class="col-md-8 card mb-4 mt-3">
+                                <p><a href="{% url 'login' %}">Log in</a> to rate this post.</p>
+                            </div>
+                        </div>
+                    {% endif %}
+                    <!-- End Rating Section -->
+
+                    <!-- Display Average Rating -->
                     <div class="row">
                         <div class="col-md-8 card mb-4 mt-3">
-                            <p><a href="{% url 'login' %}">Log in</a> to rate this post.</p>
+                            <p>Average Rating: {{ post.average_rating }}</p>
                         </div>
-                    </div>
-                {% endif %}
-                <!-- End Rating Section -->
-
-                <!-- Display Average Rating -->
-                <div class="row">
-                    <div class="col-md-8 card mb-4 mt-3">
-                        <p>Average Rating: {{ post.average_rating }}</p>
                     </div>
                 </div>
             </div>
@@ -275,4 +277,5 @@
         color: gold;
     }
 </style>
+
 {% endblock %}
