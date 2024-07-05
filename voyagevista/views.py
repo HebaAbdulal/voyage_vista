@@ -270,3 +270,16 @@ class MyBookmarksView(LoginRequiredMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         context['user_bookmarks'] = self.request.user.blog_saves.all()
         return context
+
+class AddPostView(LoginRequiredMixin, CreateView):
+    """
+    View class to handle the creation of new posts by authenticated users.
+    """
+    model = Post
+    form_class = PostForm
+    template_name = 'add_post.html'
+    success_url = reverse_lazy('home')
+
+    def form_valid(self, form):
+        form.instance.author = self.request.user
+        return super().form_valid(form)
