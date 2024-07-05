@@ -210,4 +210,69 @@
         }
     }
 </script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script>
+    $(document).ready(function() {
+        // Star rating handling
+        $('.star').on('click', function() {
+            var rating = $(this).data('value');
+            var postSlug = "{{ post.slug }}";  // Add post slug dynamically
+
+            $.ajax({
+                type: 'POST',
+                url: '/rate-post/' + postSlug + '/',
+                headers: { 'X-CSRFToken': '{{ csrf_token }}' },
+                data: JSON.stringify({ rating: rating }),
+                contentType: 'application/json',
+                success: function(response) {
+                    if (response.success) {
+                        updateStars(rating);
+                    } else {
+                        alert('Error submitting rating');
+                    }
+                }
+            });
+        });
+
+        // Hover effect for stars
+        $('.star').hover(
+            function() {
+                var rating = $(this).data('value');
+                updateStars(rating);
+            }, function() {
+                var rating = '{{ user_rating.rating }}';  // Add user's rating dynamically if available
+                updateStars(rating);
+            }
+        );
+
+        // Function to update stars
+        function updateStars(rating) {
+            $('.star').each(function() {
+                if ($(this).data('value') <= rating) {
+                    $(this).addClass('selected');
+                } else {
+                    $(this).removeClass('selected');
+                }
+            });
+        }
+
+        // Initialize stars based on user rating
+        updateStars('{{ user_rating.rating }}');
+    });
+</script>
+
+<style>
+    .rating-container {
+        display: flex;
+        justify-content: center;
+    }
+    .star {
+        font-size: 2rem;
+        cursor: pointer;
+        color: grey;
+    }
+    .star.selected {
+        color: gold;
+    }
+</style>
 {% endblock %}
