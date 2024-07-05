@@ -12,7 +12,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-    
+
     <!-- Meta Tags -->
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
@@ -26,20 +26,44 @@
         integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4" crossorigin="anonymous">
     </script>
 
-
     <style>
         .navbar-custom {
             background-color: #23bbbb;
         }
+
         .navbar-custom .navbar-nav .nav-link {
             color: white;
         }
+
         .btn-custom {
             background-color: #21a1a1;
             color: white;
         }
+
         .footer-custom {
             background-color: #1fa3a3;
+        }
+
+        /* Adjust dropdown styling */
+        .dropdown-menu {
+            background-color: #23bbbb; /* Background color */
+            border: none; /* No border */
+        }
+
+        .dropdown-menu a {
+            color: white !important; /* Text color */
+        }
+
+        .dropdown-menu a:hover {
+            background-color: #1fa3a3 !important; /* Hover background color */
+        }
+
+        .dropdown-menu .dropdown-divider {
+            border-top: 1px solid #1fa3a3; /* Divider color */
+        }
+
+        .dropdown-menu .dropdown-item {
+            padding: 0.5rem 1rem; /* Adjust padding */
         }
     </style>
 </head>
@@ -62,16 +86,19 @@
                         <a class="nav-link active" aria-current="page" href="{% url 'home' %}">Home</a>
                     </li>
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="categoriesDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <a class="nav-link dropdown-toggle" href="#" id="categoriesDropdown" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
                             Categories
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="categoriesDropdown">
-                            <li><a class="dropdown-item" href="{% url 'category' category_slug='destinations' %}">Destinations</a></li>
-                            <li><a class="dropdown-item" href="{% url 'category' category_slug='travel-tips' %}">Travel Tips</a></li>
-                            <li><a class="dropdown-item" href="{% url 'category' category_slug='accommodation' %}">Accommodation</a></li>
+                            <li><a class="dropdown-item"
+                                    href="{% url 'category' category_slug='destinations' %}">Destinations</a></li>
+                            <li><a class="dropdown-item"
+                                    href="{% url 'category' category_slug='travel-tips' %}">Travel Tips</a></li>
+                            <li><a class="dropdown-item"
+                                    href="{% url 'category' category_slug='accommodation' %}">Accommodation</a></li>
                         </ul>
                     </li>
-                    <!-- User profile dropdown menu -->
                     {% if user.is_authenticated %}
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="profileDropdown" role="button"
@@ -103,20 +130,21 @@
                     {% endif %}
                 </ul>
             </div>
+
             <span class="navbar-text text-light ms-auto">
                 Discover your next adventure
             </span>
         </div>
     </nav>
 
-     <!-- Messages -->
-     {% if messages %}
-     <div class="container mt-3">
-         {% for message in messages %}
-             <div class="alert alert-{{ message.tags }}">{{ message }}</div>
-         {% endfor %}
-     </div>
-     {% endif %}
+    <!-- Messages -->
+    {% if messages %}
+    <div class="container mt-3">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
 
     <!-- Main Content -->
     <main class="flex-shrink-0 main-bg">
