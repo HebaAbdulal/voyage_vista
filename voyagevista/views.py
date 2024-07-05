@@ -49,12 +49,18 @@ class PostDetailView(View):
         selected_post = get_object_or_404(Post, slug=slug)
         selected_post.number_of_views += 1  # Increment the number of views
         selected_post.save()
-        
+
         approved_comments = selected_post.comments.filter(approved=True)
         pending_comments = []
 
         if request.user.is_authenticated:
             pending_comments = selected_post.comments.filter(approved=False, author=request.user)
+            user_rating = selected_post.ratings.filter(user=request.user).first()
+            is_bookmarked = selected_post.saves.filter(id=request.user.id).exists()
+        else:
+            user_rating = None
+            is_bookmarked = False
+            rating_form_instance = RatingForm()
 
         is_liked = selected_post.likes.filter(id=request.user.id).exists()
 
@@ -64,13 +70,17 @@ class PostDetailView(View):
             comments_with_info.append({"mycomment": comment, "is_owner": is_owner})
 
         comment_form_instance = CommentForm()
+        rating_form_instance = RatingForm(instance=user_rating)
+
         return render(request, 'post_detail.html', {
             'post': selected_post,
             'comments': comments_with_info,
             'awaiting_comments': pending_comments,
             'comment_form': comment_form_instance,
+            'rating_form': rating_form_instance,
             'liked': is_liked,
             'is_post_user': (request.user.id == selected_post.author.id),
+            'is_bookmarked': is_bookmarked,
         })
 
     def post(self, request, slug):
@@ -92,6 +102,23 @@ class PostDetailView(View):
             selected_comment = get_object_or_404(Comment, id=comment_id)
             selected_comment.delete()
             messages.success(request, 'Comment deleted successfully.')
+        
+        elif 'submit_rating' in request.POST:
+            rating_form_instance = RatingForm(request.POST)
+            if rating_form_instance.is_valid():
+                # Save or update rating
+                rating, created = Rating.objects.update_or_create(
+                    user=request.user,
+                    post=selected_post,
+                    defaults={'rating': rating_form_instance.cleaned_data['rating']},
+                )
+                messages.success(request, 'Rating submitted successfully.')
+
+                # Return JSON response for AJAX request
+                return JsonResponse({'success': True, 'message': 'Rating submitted successfully'})
+            else:
+                messages.error(request, 'Error submitting rating.')
+                return JsonResponse({'success': False, 'error': 'Error submitting rating'})
 
         else:
             comment_form_instance = CommentForm(request.POST)
@@ -100,6 +127,7 @@ class PostDetailView(View):
                 comment.author = request.user
                 comment.post = selected_post
                 comment.save()
+                is_bookmarked = False
                 messages.success(request, 'Your comment has been submitted for approval.')
                 return HttpResponseRedirect(reverse('post_detail', args=[slug]))
 
@@ -109,6 +137,7 @@ class PostDetailView(View):
             comments_with_info.append({"mycomment": comment, "is_owner": is_owner})
 
         is_liked = selected_post.likes.filter(id=request.user.id).exists()
+        is_bookmarked = selected_post.saves.filter(id=request.user.id).exists()
 
         return render(request, 'post_detail.html', {
             'post': selected_post,
@@ -116,6 +145,9 @@ class PostDetailView(View):
             'comment_form': comment_form_instance,
             'liked': is_liked,
             'is_post_user': (request.user.id == selected_post.author.id),
+            'is_bookmarked': is_bookmarked,
+            'rating_form': rating_form_instance,
+            'average_rating': average_rating if average_rating else 0,
         })
 
 @method_decorator(login_required, name='dispatch')
