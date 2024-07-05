@@ -210,3 +210,16 @@ class DeletePostView(View):
         else:
             messages.error(request, 'You do not have permission to delete this post.')
             return HttpResponseRedirect(reverse("post_detail", args=[slug]))
+
+@method_decorator(login_required, name='dispatch')
+class PostLike(View):
+    """
+    View class to handle post likes/unlikes.
+    """
+    def post(self, request, slug):
+        selected_post = get_object_or_404(Post, slug=slug)
+        if selected_post.likes.filter(id=request.user.id).exists():
+            selected_post.likes.remove(request.user)
+        else:
+            selected_post.likes.add(request.user)
+        return HttpResponseRedirect(reverse("post_detail", args=[slug]))
