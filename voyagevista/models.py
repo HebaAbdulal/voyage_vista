@@ -53,11 +53,11 @@ class Post(models.Model):
     created_on = models.DateTimeField(auto_now_add=True)
     status = models.IntegerField(choices=STATUS, default=0)
     likes = models.ManyToManyField(User, related_name='blog_likes', blank=True)
-    shares = models.ManyToManyField(User, related_name='blog_shares', blank=True)
     saves = models.ManyToManyField(User, related_name='blog_saves', blank=True)
     approved = models.BooleanField(default=False)
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, blank=True)
     number_of_views = models.IntegerField(default=0)
+    average_rating = models.FloatField(default=0)
 
 
     class Meta:
@@ -73,17 +73,20 @@ class Post(models.Model):
         """
         return self.likes.count()
 
-    def number_of_shares(self):
-        """
-        Returns the total number of shares for the post.
-        """
-        return self.shares.count()
-
     def number_of_saves(self):
         """
         Returns the total number of saves for the post.
         """
         return self.saves.count()
+    
+    def average_rating(self):
+        """
+        Alias for calculate_average_rating method. Deprecated in favor of calculate_average_rating.
+        """
+        ratings = self.ratings.all()
+        if ratings:
+            return sum(rating.rating for rating in ratings) / ratings.count()
+        return 0
 
 
 class Comment(models.Model):
@@ -110,4 +113,24 @@ class Comment(models.Model):
         """
         return self.comments.count()
 
+class Rating(models.Model):
+    """
+    Model representing a rating on post
+    """
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    post = models.ForeignKey('Post', on_delete=models.CASCADE, related_name='ratings')
+    rating = models.IntegerField()  # Ensure this is the correct field name
+    created_at = models.DateTimeField(auto_now_add=True)
+    average_rating = models.FloatField(default=0)
 
+    def __str__(self):
+        return f"{self.user} - {self.post} - {self.rating}"
+    
+    def calculate_average_rating(self):
+        """
+        Calculate the average rating for a post based on all ratings.
+        """
+        ratings = self.ratings.all()
+        if ratings:
+            return sum(rating.rating for rating in ratings) / ratings.count()
+        return 0
