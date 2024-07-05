@@ -13,4 +13,5 @@ urlpatterns = [
     path('my-likes/', MyLikesView.as_view(), name='my_likes'),
     path('my-comments/', MyCommentsView.as_view(), name='my_comments'),
     path('my-bookmarks/', MyBookmarksView.as_view(), name='my_bookmarks'),
+    path('rate-post/<slug:post_slug>/', views.rate_post, name='rate_post'),
 ]
