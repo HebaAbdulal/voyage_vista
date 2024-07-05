@@ -230,27 +230,6 @@ class CommentDeleteView(View):
 
 @method_decorator(login_required, name='dispatch')
 class PostLike(View):
-    def post(self, request, slug):
-        selected_post = get_object_or_404(Post, slug=slug)
-        if selected_post.likes.filter(id=request.user.id).exists():
-            selected_post.likes.remove(request.user)
-        else:
-            selected_post.likes.add(request.user)
-        return HttpResponseRedirect(reverse("post_detail", args=[slug]))
-
-@method_decorator(login_required, name='dispatch')
-class DeletePostView(View):
-    def get(self, request, slug=None, *args, **kwargs):
-        selected_post = get_object_or_404(Post.objects.filter(status=1), slug=slug)
-        if request.user.id == selected_post.author.id:
-            selected_post.delete()
-            return redirect("home")
-        else:
-            messages.error(request, 'You do not have permission to delete this post.')
-            return HttpResponseRedirect(reverse("post_detail", args=[slug]))
-
-@method_decorator(login_required, name='dispatch')
-class PostLike(View):
     """
     View class to handle post likes/unlikes.
     """
