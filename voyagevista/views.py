@@ -248,3 +248,14 @@ class MyLikesView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         return self.request.user.blog_likes.all()
+
+class MyCommentsView(LoginRequiredMixin, ListView):
+    """
+    View class to display a list of posts that current user has commented.
+    """
+    model = Comment
+    template_name = 'my_comments.html'
+    context_object_name = 'user_comments'
+
+    def get_queryset(self):
+        return self.request.user.commenter.all()
