@@ -65,4 +65,3 @@ class CommentAdmin(admin.ModelAdmin):
     list_display = ('post', 'created_on', 'author', 'approved')
     list_filter = ('author', 'created_on', 'approved')
     search_fields = ('email', 'author', 'title')
-    

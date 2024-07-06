@@ -8,6 +8,13 @@
             <div class="row">
                 <!-- Category Navigation -->
                 <div class="col-12 mb-3">
+                    <ul class="nav nav-pills">
+                        {% for category in categories %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'category' category.slug %}">{{ category.name }}</a>
+                            </li>
+                        {% endfor %}
+                    </ul>
                 </div>
                 <!-- Posts List -->
                 {% for post in page_obj %}
@@ -30,7 +37,7 @@
                             <p class="card-text text-muted h6">{{ post.created_on }}
                                 <i class="far fa-thumbs-up"></i> {{ post.number_of_likes }}
                                 <i class="far fa-comment"></i> {{ post.number_of_comments }}
-                                <i class="far fa-bookmark"></i></i> {{ post.number_of_saves }}
+                                <i class="far fa-bookmark"></i> {{ post.number_of_saves }}
                             </p>
                         </div>
                     </div>

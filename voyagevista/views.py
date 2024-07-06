@@ -28,7 +28,7 @@ def category_view(request, category_slug=None):
     posts = Post.objects.filter(status=1).order_by('-created_on')
 
     if category_slug:
-        category = Category.objects.get(slug=category_slug)
+        category = get_object_or_404(Category, slug=category_slug)
         posts = posts.filter(category=category)
 
     paginator = Paginator(posts, 4)
@@ -301,8 +301,6 @@ class AddPostView(LoginRequiredMixin, CreateView):
         form.instance.author = self.request.user
         return super().form_valid(form)
 
-@login_required
-@csrf_exempt
 def rate_post(request, post_slug):
     """
     View function to handle rating of posts by authenticated users via JSON POST requests.
@@ -316,15 +314,18 @@ def rate_post(request, post_slug):
             if rating_value is None or not (1 <= rating_value <= 5):
                 return JsonResponse({'success': False, 'error': 'Invalid rating value.'}, status=400)
             
-            post = get_object_or_404(Post, slug=post_slug)
+            # Get user and post objects
             user = request.user
+            post = get_object_or_404(Post, slug=post_slug)
 
-            # Check if the user has already rated this post
-            rating, created = Rating.objects.get_or_create(user=user, post=post)
+            # Create or get existing rating object
+            rating, created = Rating.objects.get_or_create(user=user, post=post, defaults={'rating': 0})
+
+            # Update the rating value
             rating.rating = rating_value
             rating.save()
 
-            # Calculate the new average rating
+            # Calculate average rating
             average_rating = Rating.objects.filter(post=post).aggregate(Avg('rating'))['rating__avg']
             post.average_rating = average_rating
             post.save()

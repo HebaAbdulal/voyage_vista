@@ -82,7 +82,7 @@
                     {% else %}
                         <div class="row">
                             <div class="col-md-8 card mb-4 mt-3">
-                                <p><a href="{% url 'login' %}">Log in</a> to rate this post.</p>
+                                <p><a href="{% url 'account_login' %}">Log in</a> to rate this post.</p>
                             </div>
                         </div>
                     {% endif %}
@@ -91,7 +91,7 @@
                     <!-- Display Average Rating -->
                     <div class="row">
                         <div class="col-md-8 card mb-4 mt-3">
-                            <p>Average Rating: {{ post.average_rating }}</p>
+                            <p>Average Rating: <span id="average-rating">{{ post.average_rating|floatformat:1 }}</span></p>
                         </div>
                     </div>
                 </div>
@@ -261,6 +261,53 @@
         // Initialize stars based on user rating
         updateStars('{{ user_rating.rating }}');
     });
+    document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('rate-form').addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        let ratingValue = document.querySelector('input[name="rating"]:checked').value;
+        let postSlug = this.dataset.postSlug;
+
+        fetch(`/rate/${postSlug}/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            body: JSON.stringify({ rating: ratingValue })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Display success message to the user
+                let messageDiv = document.getElementById('message');
+                messageDiv.textContent = data.message;
+                messageDiv.style.display = 'block';
+                messageDiv.classList.add('success-message'); // Optional: add a CSS class for styling
+            } else {
+                // Handle errors if necessary
+                console.error('Error:', data.error);
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    });
+
+    // Function to get CSRF token from cookies
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            let cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                let cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+});
 </script>
 
 <style>
@@ -276,6 +323,11 @@
     .star.selected {
         color: gold;
     }
+
+    .success-message {
+    color: green;
+    font-weight: bold;
+}
 </style>
 
 {% endblock %}

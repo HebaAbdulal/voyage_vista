@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from cloudinary.models import CloudinaryField
+from django.utils import timezone
 
 # Create your models here.
 STATUS = ((0, "Draft"), (1, "Published"))
@@ -59,7 +60,6 @@ class Post(models.Model):
     number_of_views = models.IntegerField(default=0)
     average_rating = models.FloatField(default=0)
 
-
     class Meta:
         ordering = ['-created_on']
 
@@ -87,7 +87,6 @@ class Post(models.Model):
         if ratings:
             return sum(rating.rating for rating in ratings) / ratings.count()
         return 0
-
 
 class Comment(models.Model):
     """
@@ -119,7 +118,7 @@ class Rating(models.Model):
     """
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     post = models.ForeignKey('Post', on_delete=models.CASCADE, related_name='ratings')
-    rating = models.IntegerField()  # Ensure this is the correct field name
+    rating = models.IntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
     average_rating = models.FloatField(default=0)
 
