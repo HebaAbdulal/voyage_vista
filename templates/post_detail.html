@@ -126,16 +126,16 @@
                             </div>
                             <form method="post" action="{% url 'edit_comment' post.slug comment.id %}" class="edit-form" id="edit-form-{{ comment.id }}" style="display:none;">
                                 {% csrf_token %}
-                                <textarea name="content" class="form-control">{{ comment.body }}</textarea>
+                                <textarea name="body" class="form-control">{{ comment.body }}</textarea>
                                 <div style="margin-top: 5px;">
-                                    <button type="submit" name="edit_comment" class="btn btn-custom btn-sm mr-1">Submit Edit</button>
+                                    <button type="button" onclick="submitEdit('{{ comment.id }}', '{{ post.slug }}')" class="btn btn-custom btn-sm mr-1">Submit Edit</button>
                                     <button type="button" onclick="toggleEditForm('{{ comment.id }}')" class="btn btn-danger btn-sm">Cancel</button>
                                 </div>
                             </form>
                         </div>
                     {% endfor %}
                 {% endif %}
-
+    
                 <!-- Display approved comments -->
                 {% for comment_info in comments %}
                     <div class="comments" style="padding: 10px;">
@@ -145,26 +145,27 @@
                         </p>
                         {{ comment_info.mycomment.content|linebreaks }}
                         {% if comment_info.is_owner %}
-                            <div class>
-                                <button onclick="document.getElementById('edit-form-{{ comment_info.mycomment.id }}').style.display='block'" class="btn btn-sm btn-custom">Edit</button>
-                                <form method="post" action="{% url 'edit_comment' post.slug comment_info.mycomment.id %}" class="d-inline">
-                                    {% csrf_token %}
-                                    <div id="edit-form-{{ comment_info.mycomment.id }}" style="display:none;">
-                                        <textarea name="content" class="form-control">{{ comment_info.mycomment.content }}</textarea>
-                                        <button type="submit" name="edit_comment" class="btn btn-custom btn-sm">Submit Edit</button>
-                                    </div>
-                                </form>
+                            <div class="comment-actions">
+                                <button onclick="toggleEditForm('{{ comment_info.mycomment.id }}')" class="btn btn-sm btn-custom">Edit</button>
                                 <form method="post" action="{% url 'delete_comment' post.slug comment_info.mycomment.id %}" class="d-inline">
                                     {% csrf_token %}
                                     <button type="submit" name="delete_comment" class="btn btn-danger btn-sm">Delete</button>
                                 </form>
                             </div>
+                            <form method="post" action="{% url 'edit_comment' post.slug comment_info.mycomment.id %}" class="edit-form" id="edit-form-{{ comment_info.mycomment.id }}" style="display:none;">
+                                {% csrf_token %}
+                                <textarea name="body" class="form-control">{{ comment_info.mycomment.content }}</textarea>
+                                <div style="margin-top: 5px;">
+                                    <button type="button" onclick="submitEdit('{{ comment_info.mycomment.id }}', '{{ post.slug }}')" class="btn btn-custom btn-sm mr-1">Submit Edit</button>
+                                    <button type="button" onclick="toggleEditForm('{{ comment_info.mycomment.id }}')" class="btn btn-danger btn-sm">Cancel</button>
+                                </div>
+                            </form>
                         {% endif %}
                     </div>
                 {% endfor %}
             </div>
         </div>
-
+    
         <div class="col-md-4 card mb-4 mt-3">
             <div class="card-body">
                 {% if commented %}
@@ -187,7 +188,7 @@
             </div>
         </div>
     </div>
-
+    
     <!-- Display messages -->
     {% if messages %}
         <div id="approval-message">
@@ -196,22 +197,22 @@
             {% endfor %}
         </div>
     {% endif %}
-</div>
-
-<script>
-    function toggleEditForm(commentId) {
-        var editForm = document.getElementById('edit-form-' + commentId);
-        var commentActions = document.getElementById('comment-actions-' + commentId);
-
-        if (editForm.style.display === 'none') {
-            editForm.style.display = 'block';
-            commentActions.style.display = 'none';
-        } else {
-            editForm.style.display = 'none';
-            commentActions.style.display = 'block';
-        }
+    
+    <script>
+        function toggleEditForm(commentId) {
+            var editForm = document.getElementById('edit-form-' + commentId);
+            var commentActions = document.getElementById('comment-actions-' + commentId);
+    
+            if (editForm.style.display === 'none') {
+                editForm.style.display = 'block';
+                commentActions.style.display = 'none';
+            } else {
+                editForm.style.display = 'none';
+                commentActions.style.display = 'block';
+            }
     }
-</script>
+    </script>
+      
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script>
     $(document).ready(function() {
