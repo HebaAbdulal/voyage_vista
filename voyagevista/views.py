@@ -106,7 +106,6 @@ class PostDetailView(View):
         elif 'submit_rating' in request.POST:
             rating_form_instance = RatingForm(request.POST)
             if rating_form_instance.is_valid():
-                # Save or update rating
                 rating, created = Rating.objects.update_or_create(
                     user=request.user,
                     post=selected_post,
@@ -114,7 +113,6 @@ class PostDetailView(View):
                 )
                 messages.success(request, 'Rating submitted successfully.')
 
-                # Return JSON response for AJAX request
                 return JsonResponse({'success': True, 'message': 'Rating submitted successfully'})
             else:
                 messages.error(request, 'Error submitting rating.')
@@ -147,7 +145,6 @@ class PostDetailView(View):
             'is_post_user': (request.user.id == selected_post.author.id),
             'is_bookmarked': is_bookmarked,
             'rating_form': rating_form_instance,
-            'average_rating': average_rating if average_rating else 0,
         })
 
 @method_decorator(login_required, name='dispatch')
@@ -170,38 +167,35 @@ class PostBookmark(View):
 class CommentEdit(View):
     def get(self, request, slug=None, pk=None, *args, **kwargs):
         selected_post = get_object_or_404(Post, slug=slug, status=1)
-        comment_queryset = selected_post.comments.filter(pk=pk)
-        selected_comment = get_object_or_404(comment_queryset)
+        selected_comment = get_object_or_404(Comment, pk=pk, post=selected_post)
         if request.user.id != selected_comment.author.id:
             messages.error(request, 'You do not have permission to edit this comment.')
             return HttpResponseRedirect(reverse("post_detail", args=[slug]))
         return render(request, "update_comment.html", {
             "status_message": "",
             "post": selected_post,
-            "comments": selected_comment,
-            "form": CommentForm(instance=selected_comment),
+            "comment_form": CommentForm(instance=selected_comment),
         })
 
     def post(self, request, slug=None, pk=None, *args, **kwargs):
         selected_post = get_object_or_404(Post, slug=slug, status=1)
-        comment_queryset = selected_post.comments.filter(pk=pk)
-        selected_comment = get_object_or_404(comment_queryset)
+        selected_comment = get_object_or_404(Comment, pk=pk, post=selected_post)
         if request.user.id != selected_comment.author.id:
-            messages.error(request, 'You do not have permission to edit this comment.')
-            return HttpResponseRedirect(reverse("post_detail", args=[slug]))
+            return JsonResponse({'success': False, 'error': 'You do not have permission to edit this comment.'})
+
         comment_form_instance = CommentForm(data=request.POST, instance=selected_comment)
         if comment_form_instance.is_valid():
-            mycomment = comment_form_instance.save(commit=False)
-            mycomment.save()
-            status_message = "Saved Successfully"
+            comment_form_instance.save()
+            return JsonResponse({'success': True, 'message': 'Comment updated successfully.'})
         else:
-            status_message = "Invalid Input!"
+            return JsonResponse({'success': False, 'error': 'Invalid input.'})
+        
+        messages.error(request, 'Invalid input.')
         return render(request, "update_comment.html", {
-            "form": comment_form_instance,
-            "status_message": status_message,
+            "comment_form": comment_form_instance,
             "post": selected_post,
         })
-
+        
 @method_decorator(login_required, name='dispatch')
 class CommentDeleteView(View):
     def get(self, request, slug=None, pk=None, *args, **kwargs):
