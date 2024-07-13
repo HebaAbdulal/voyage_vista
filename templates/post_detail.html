@@ -210,6 +210,29 @@
                 editForm.style.display = 'none';
                 commentActions.style.display = 'block';
             }
+        }
+    
+        function submitEdit(commentId, postSlug) {
+            var editForm = document.getElementById('edit-form-' + commentId);
+            var formData = new FormData(editForm);
+            formData.append('comment_id', commentId);
+
+            fetch(`/comment/${postSlug}/${commentId}/edit/`, {
+            method: "POST",
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'X-CSRFToken': '{{ csrf_token }}'
+            }
+            }).then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert(data.message);
+                location.reload();
+            } else {
+                alert(data.error);
+            }
+        }).catch(error => console.log(error));
     }
     </script>
       
