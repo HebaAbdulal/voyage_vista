@@ -60,7 +60,6 @@ class PostDetailView(View):
         else:
             user_rating = None
             is_bookmarked = False
-            rating_form_instance = RatingForm()
 
         is_liked = selected_post.likes.filter(id=request.user.id).exists()
 
@@ -85,7 +84,7 @@ class PostDetailView(View):
 
     def post(self, request, slug):
         selected_post = get_object_or_404(Post, slug=slug)
-        approved_comments = selected_post.comments.filter(approved=True)
+        approved_comments = selected_post.comments.filter(approved=True).order_by("-created_on")
 
         if 'edit_comment' in request.POST:
             comment_id = request.POST.get('comment_id')
@@ -145,6 +144,7 @@ class PostDetailView(View):
             'is_post_user': (request.user.id == selected_post.author.id),
             'is_bookmarked': is_bookmarked,
             'rating_form': rating_form_instance,
+            'commented': request.user.is_authenticated and comments.filter(author=request.user).exists(),
         })
 
 @method_decorator(login_required, name='dispatch')
@@ -221,6 +221,18 @@ class CommentDeleteView(View):
             "liked": is_liked,
             "comment_form": CommentForm(),
         })
+
+    def post(self, request, slug=None, pk=None, *args, **kwargs):
+        selected_post = get_object_or_404(Post, slug=slug, status=1)
+        selected_comment = get_object_or_404(Comment, pk=pk, post=selected_post)
+        
+        if request.user.id != selected_comment.author.id:
+            messages.error(request, 'You do not have permission to delete this comment.')
+            return HttpResponseRedirect(reverse("post_detail", args=[slug]))
+        
+        selected_comment.delete()
+        messages.success(request, "Comment Deleted Successfully")
+        return redirect("post_detail", slug=slug)
 
 @method_decorator(login_required, name='dispatch')
 class PostLike(View):
