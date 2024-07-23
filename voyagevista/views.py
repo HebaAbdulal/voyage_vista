@@ -99,7 +99,6 @@ class PostDetailView(View):
                     defaults={'rating': rating_form_instance.cleaned_data['rating']},
                 )
                 messages.success(request, 'Rating submitted successfully.')
-
                 return JsonResponse({'success': True, 'message': 'Rating submitted successfully'})
             else:
                 messages.error(request, 'Error submitting rating.')
@@ -112,15 +111,10 @@ class PostDetailView(View):
                 comment.author = request.user
                 comment.post = selected_post
                 comment.save()
-                is_bookmarked = False
                 messages.success(request, 'Your comment has been submitted for approval.')
                 return HttpResponseRedirect(reverse('post_detail', args=[slug]))
 
-        comments_with_info = []
-        for comment in approved_comments:
-            is_owner = comment.author.username.lower() == request.user.username.lower()
-            comments_with_info.append({"mycomment": comment, "is_owner": is_owner})
-
+        comments_with_info = [{"mycomment": comment, "is_owner": comment.author == request.user} for comment in approved_comments]
         is_liked = selected_post.likes.filter(id=request.user.id).exists()
         is_bookmarked = selected_post.saves.filter(id=request.user.id).exists()
 
@@ -129,10 +123,10 @@ class PostDetailView(View):
             'comments': comments_with_info,
             'comment_form': comment_form_instance,
             'liked': is_liked,
-            'is_post_user': (request.user.id == selected_post.author.id),
+            'is_post_user': request.user == selected_post.author,
             'is_bookmarked': is_bookmarked,
-            'rating_form': rating_form_instance,
-            'commented': request.user.is_authenticated and comments.filter(author=request.user).exists(),
+            'rating_form': RatingForm(instance=selected_post.ratings.filter(user=request.user).first()),
+            'commented': request.user.is_authenticated and selected_post.comments.filter(author=request.user).exists(),
         })
 
 @method_decorator(login_required, name='dispatch')
