@@ -285,6 +285,20 @@ class MyBookmarksView(LoginRequiredMixin, TemplateView):
         context['user_bookmarks'] = self.request.user.blog_saves.all()
         return context
 
+class MyPostsView(LoginRequiredMixin, TemplateView):
+    """
+    View class to display a list of posts that current user has created, categorized by their approval status.
+    """
+    template_name = 'my_posts.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user_posts = self.request.user.blog_posts.all()
+        context['approved_posts'] = user_posts.filter(approved=True)
+        context['pending_posts'] = user_posts.filter(approved=False)
+        return context
+
+        
 class AddPostView(LoginRequiredMixin, CreateView):
     """
     View class to handle the creation of new posts by authenticated users.
