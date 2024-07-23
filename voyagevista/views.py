@@ -47,38 +47,26 @@ def category_view(request, category_slug=None):
 class PostDetailView(View):
     def get(self, request, slug):
         selected_post = get_object_or_404(Post, slug=slug)
-        selected_post.number_of_views += 1  # Increment the number of views
+        selected_post.number_of_views += 1
         selected_post.save()
 
         approved_comments = selected_post.comments.filter(approved=True)
-        pending_comments = []
+        pending_comments = selected_post.comments.filter(approved=False, author=request.user) if request.user.is_authenticated else []
 
-        if request.user.is_authenticated:
-            pending_comments = selected_post.comments.filter(approved=False, author=request.user)
-            user_rating = selected_post.ratings.filter(user=request.user).first()
-            is_bookmarked = selected_post.saves.filter(id=request.user.id).exists()
-        else:
-            user_rating = None
-            is_bookmarked = False
+        user_rating = selected_post.ratings.filter(user=request.user).first() if request.user.is_authenticated else None
+        is_bookmarked = selected_post.saves.filter(id=request.user.id).exists() if request.user.is_authenticated else False
+        is_liked = selected_post.likes.filter(id=request.user.id).exists() if request.user.is_authenticated else False
 
-        is_liked = selected_post.likes.filter(id=request.user.id).exists()
-
-        comments_with_info = []
-        for comment in approved_comments:
-            is_owner = comment.author.username.lower() == request.user.username.lower()
-            comments_with_info.append({"mycomment": comment, "is_owner": is_owner})
-
-        comment_form_instance = CommentForm()
-        rating_form_instance = RatingForm(instance=user_rating)
+        comments_with_info = [{"mycomment": comment, "is_owner": comment.author == request.user} for comment in approved_comments]
 
         return render(request, 'post_detail.html', {
             'post': selected_post,
             'comments': comments_with_info,
             'awaiting_comments': pending_comments,
-            'comment_form': comment_form_instance,
-            'rating_form': rating_form_instance,
+            'comment_form': CommentForm(),
+            'rating_form': RatingForm(instance=user_rating),
             'liked': is_liked,
-            'is_post_user': (request.user.id == selected_post.author.id),
+            'is_post_user': request.user == selected_post.author,
             'is_bookmarked': is_bookmarked,
         })
 
