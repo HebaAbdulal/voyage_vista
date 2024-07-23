@@ -231,17 +231,26 @@ class PostLike(View):
 
 @method_decorator(login_required, name='dispatch')
 class DeletePostView(View):
-    """
-    View class to handle deleting user's own posts.
-    """
     def get(self, request, slug=None, *args, **kwargs):
-        selected_post = get_object_or_404(Post.objects.filter(status=1), slug=slug)
+        selected_post = get_object_or_404(Post, slug=slug)
         if request.user.id == selected_post.author.id:
             selected_post.delete()
-            return redirect("home")
+            messages.success(request, 'Post deleted successfully.')
+            return redirect('home')
         else:
             messages.error(request, 'You do not have permission to delete this post.')
-            return HttpResponseRedirect(reverse("post_detail", args=[slug]))
+            return HttpResponseRedirect(reverse('post_detail', args=[slug]))
+    
+    
+    def post(self, request, slug, *args, **kwargs):
+        selected_post = get_object_or_404(Post, slug=slug)
+        if request.user == selected_post.author:
+            selected_post.delete()
+            messages.success(request, 'Post deleted successfully.')
+            return redirect('home')
+        else:
+            messages.error(request, 'You do not have permission to delete this post.')
+            return redirect(reverse('post_detail', args=[slug]))
 
 class MyLikesView(LoginRequiredMixin, ListView):
     """
