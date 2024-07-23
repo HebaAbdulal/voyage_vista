@@ -300,9 +300,6 @@ class MyPostsView(LoginRequiredMixin, TemplateView):
 
         
 class AddPostView(LoginRequiredMixin, CreateView):
-    """
-    View class to handle the creation of new posts by authenticated users.
-    """
     model = Post
     form_class = PostForm
     template_name = 'add_post.html'
@@ -310,7 +307,10 @@ class AddPostView(LoginRequiredMixin, CreateView):
 
     def form_valid(self, form):
         form.instance.author = self.request.user
-        return super().form_valid(form)
+        form.instance.status = 0
+        response = super().form_valid(form)
+        messages.success(self.request, 'Your post is awaiting approval.')
+        return redirect(self.success_url)
 
 def rate_post(request, post_slug):
     """
