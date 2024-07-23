@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1>My Posts</h1>
+
+    <h2>Approved Posts</h2>
+    <ul>
+        {% for post in approved_posts %}
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <img class="card-img-top" src="{% if post.featured_image %}{{ post.featured_image.url }}{% else %}{% static 'images/default.jpg' %}{% endif %}" alt="placeholder image">
+                <div class="card-body">
+                    <h5 class="card-title">{{ post.title }}</h5>
+                    <p class="card-text">{{ post.excerpt }}</p>
+                    <a href="{% url 'post_detail' post.slug %}" class="btn btn-custom">Read More</a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <p>You have no approved posts.</p>
+        {% endfor %}
+    </ul>
+
+    <h2>Awaiting Approval</h2>
+    <ul>
+        {% for post in pending_posts %}
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <img class="card-img-top" src="{% if post.featured_image %}{{ post.featured_image.url }}{% else %}{% static 'images/default.jpg' %}{% endif %}" alt="placeholder image">
+                <div class="card-body">
+                    <h5 class="card-title">{{ post.title }}</h5>
+                    <p class="card-text">{{ post.excerpt }}</p>
+                    <a href="{% url 'post_detail' post.slug %}" class="btn btn-custom">Read More</a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <p>You have no posts awaiting approval.</p>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}
