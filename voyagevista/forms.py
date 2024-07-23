@@ -11,12 +11,16 @@ class CommentForm(forms.ModelForm):
         fields = ('body',)
 
 class PostForm(forms.ModelForm):
-    """
-    Form for submitting posts.
-    """
     class Meta:
         model = Post
-        fields = ['title', 'featured_image', 'content', 'category', 'excerpt']
+        fields = ['title', 'content', 'featured_image', 'excerpt', 'category']
+
+    def save(self, commit=True):
+        post = super().save(commit=False)
+        post.approved = False  # Set approved to False by default
+        if commit:
+            post.save()
+        return post
 
 class RatingForm(forms.ModelForm):
     """
