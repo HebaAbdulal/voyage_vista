@@ -351,3 +351,29 @@ def rate_post(request, post_slug):
             return JsonResponse({'success': False, 'error': str(e)}, status=500)
 
     return JsonResponse({'success': False}, status=400)
+
+@method_decorator(login_required, name='dispatch')
+class EditPostView(View):
+    def get(self, request, slug):
+        post = get_object_or_404(Post, slug=slug)
+        if request.user == post.author or request.user.is_superuser:
+            form = PostForm(instance=post)
+            return render(request, 'edit_post.html', {'form': form, 'post': post})
+        else:
+            messages.error(request, 'You do not have permission to edit this post.')
+            return redirect('post_detail', slug=slug)
+
+    def post(self, request, slug):
+        post = get_object_or_404(Post, slug=slug)
+        if request.user == post.author or request.user.is_superuser:
+            form = PostForm(request.POST, request.FILES, instance=post)
+            if form.is_valid():
+                form.save()
+                messages.success(request, 'Post updated successfully.')
+                return redirect('post_detail', slug=slug)
+            else:
+                messages.error(request, 'Error updating post.')
+                return render(request, 'edit_post.html', {'form': form, 'post': post})
+        else:
+            messages.error(request, 'You do not have permission to edit this post.')
+            return redirect('post_detail', slug=slug)
