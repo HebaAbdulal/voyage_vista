@@ -96,6 +96,9 @@ class Post(models.Model):
             self.slug = slugify(self.title) or str(uuid.uuid4())
         super().save(*args, **kwargs)
 
+    def number_of_comments(self):
+        return self.comments.filter(approved=True).count()
+
 class Comment(models.Model):
     """
     Model representing a comment on a post.
@@ -118,7 +121,7 @@ class Comment(models.Model):
         """
         Returns the total number of comments for the post.
         """
-        return self.comments.count()
+        return self.comments.filter(approved=True).count()
 
 class Rating(models.Model):
     """
