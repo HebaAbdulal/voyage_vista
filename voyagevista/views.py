@@ -43,6 +43,15 @@ def category_view(request, category_slug=None):
     }
 
     return render(request, 'index.html', context)
+    
+
+class HomeView(generic.ListView):
+    """
+    View for displaying a list of published posts.
+    """
+    queryset = Post.objects.filter(status=1)
+    template_name = "index.html"
+    paginate_by = 4
 
 
 class PostDetailView(View):
