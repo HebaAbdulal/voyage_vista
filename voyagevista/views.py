@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views import generic
 from .models import Post, Category, Comment, Rating
-from django.core.paginator import Paginator
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from .forms import CommentForm, PostForm, RatingForm
 from django.http import JsonResponse
 import json
@@ -17,6 +17,7 @@ from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from django.db.models import Avg
 from django.db import IntegrityError
+from django.db.models import Q
 
 
 def category_view(request, category_slug=None):
