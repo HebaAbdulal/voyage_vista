@@ -179,8 +179,10 @@ class CommentEdit(View):
 
         comment_form_instance = CommentForm(data=request.POST, instance=selected_comment)
         if comment_form_instance.is_valid():
-            comment_form_instance.save()
-            return JsonResponse({'success': True, 'message': 'Comment updated successfully.'})
+            edited_comment = comment_form_instance.save(commit=False)
+            edited_comment.approved = False  # Set the comment to awaiting approval
+            edited_comment.save()
+            return JsonResponse({'success': True, 'message': 'Comment updated successfully and is now awaiting approval.'})
         else:
             return JsonResponse({'success': False, 'error': 'Invalid input.'})
         
@@ -271,43 +273,109 @@ class MyLikesView(LoginRequiredMixin, ListView):
     model = Post
     template_name = 'my_likes.html'
     context_object_name = 'liked_posts'
+    paginate_by = 4
 
-    def get_queryset(self):
-        return self.request.user.blog_likes.all()
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        # Access the related posts via the user relationship
+        liked_posts = self.request.user.blog_likes.all()
+
+        paginator = Paginator(liked_posts, self.paginate_by)
+        page = self.request.GET.get('page')
+
+        try:
+            posts_page = paginator.page(page)
+        except PageNotAnInteger:
+            posts_page = paginator.page(1)
+        except EmptyPage:
+            posts_page = paginator.page(paginator.num_pages)
+
+        context['liked_posts'] = posts_page
+        context['page_obj'] = posts_page
+
+        return context
 
 class MyCommentsView(LoginRequiredMixin, ListView):
     """
-    View class to display a list of posts that current user has commented.
+    View class to display a list of posts that the current user has commented on.
     """
     model = Comment
     template_name = 'my_comments.html'
     context_object_name = 'user_comments'
+    paginate_by = 4
 
     def get_queryset(self):
         return self.request.user.commenter.all()
+
 
 class MyBookmarksView(LoginRequiredMixin, TemplateView):
     """
     View class to display a list of posts that current user has bookmarked.
     """
     template_name = 'my_bookmarks.html'
+    paginate_by = 4
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['user_bookmarks'] = self.request.user.blog_saves.all()
+
+        # Access the related posts via the user relationship
+        bookmarked_posts = self.request.user.blog_saves.all()
+
+        paginator = Paginator(bookmarked_posts, self.paginate_by)
+        page = self.request.GET.get('page')
+
+        try:
+            posts_page = paginator.page(page)
+        except PageNotAnInteger:
+            posts_page = paginator.page(1)
+        except EmptyPage:
+            posts_page = paginator.page(paginator.num_pages)
+
+        context['bookmarked_posts'] = posts_page
+        context['page_obj'] = posts_page
+
         return context
+
 
 class MyPostsView(LoginRequiredMixin, TemplateView):
     """
     View class to display a list of posts that current user has created, categorized by their approval status.
     """
     template_name = 'my_posts.html'
+    paginate_by = 4
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         user_posts = self.request.user.blog_posts.all()
-        context['approved_posts'] = user_posts.filter(approved=True)
-        context['pending_posts'] = user_posts.filter(approved=False)
+        
+        approved_posts = user_posts.filter(approved=True)
+        pending_posts = user_posts.filter(approved=False)
+
+        paginator_approved = Paginator(approved_posts, self.paginate_by)
+        paginator_pending = Paginator(pending_posts, self.paginate_by)
+        
+        page = self.request.GET.get('page')
+
+        try:
+            approved_page = paginator_approved.page(page)
+        except PageNotAnInteger:
+            approved_page = paginator_approved.page(1)
+        except EmptyPage:
+            approved_page = paginator_approved.page(paginator_approved.num_pages)
+
+        try:
+            pending_page = paginator_pending.page(page)
+        except PageNotAnInteger:
+            pending_page = paginator_pending.page(1)
+        except EmptyPage:
+            pending_page = paginator_pending.page(paginator_pending.num_pages)
+
+        context['approved_posts'] = approved_page
+        context['pending_posts'] = pending_page
+        context['approved_page_obj'] = approved_page
+        context['pending_page_obj'] = pending_page
+
         return context
 
         
@@ -366,6 +434,8 @@ def rate_post(request, post_slug):
 
 @method_decorator(login_required, name='dispatch')
 class EditPostView(View):
+    success_url = 'post_detail'  # Ensure this URL name exists in your urls.py
+
     def get(self, request, slug):
         post = get_object_or_404(Post, slug=slug)
         if request.user == post.author or request.user.is_superuser:
@@ -380,12 +450,33 @@ class EditPostView(View):
         if request.user == post.author or request.user.is_superuser:
             form = PostForm(request.POST, request.FILES, instance=post)
             if form.is_valid():
-                form.save()
-                messages.success(request, 'Post updated successfully.')
-                return redirect('post_detail', slug=slug)
+                edited_post = form.save(commit=False)
+                edited_post.approved = False  # Set post to awaiting approval
+                edited_post.status = 0  # Set post status to Draft
+                edited_post.save()
+                messages.success(request, 'Post updated successfully and is now awaiting approval.')
+                return redirect(self.success_url, slug=slug)  # Redirect to the post detail view
             else:
-                messages.error(request, 'Error updating post.')
-                return render(request, 'edit_post.html', {'form': form, 'post': post})
+                messages.error(request, 'Invalid input.')
+        return render(request, 'edit_post.html', {'form': form, 'post': post})
+
+        
+class SearchPostListView(ListView):
+    model = Post
+    template_name = 'search_results.html'
+    context_object_name = 'results'
+    paginate_by = 10
+
+    def get_queryset(self):
+        query = self.request.GET.get('q')
+        if query:
+            return Post.objects.filter(
+                Q(title__icontains=query) | Q(content__icontains=query)
+            )
         else:
-            messages.error(request, 'You do not have permission to edit this post.')
-            return redirect('post_detail', slug=slug)
+            return Post.objects.none()
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['query'] = self.request.GET.get('q')
+        return context
