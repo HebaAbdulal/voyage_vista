@@ -71,10 +71,21 @@ INSTALLED_APPS = [
     'voyagevista',
 ]
 
+LANGUAGE_CODE = 'en-us'
+
+TIME_ZONE = 'UTC'
+
+USE_I18N = True
+
+USE_L10N = True
+
+USE_TZ = True
+
+
 SITE_ID = 1
 
 LOGIN_REDIRECT_URL = '/'
-LOGUT_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/'
 ACCOUNT_EMAIL_VERIFICATION = 'none'
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
@@ -157,15 +168,11 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
-
-USE_I18N = True
-
-USE_L10N = True
-
-USE_TZ = True
+# Locale Paths
+LOCALE_PATHS = [
+    os.path.join(BASE_DIR, 'locale'),
+]
 
 
 # Static files (CSS, JavaScript, Images)
