@@ -89,8 +89,10 @@ class PostDetailView(View):
             selected_comment = get_object_or_404(Comment, id=comment_id)
             comment_form_instance = CommentForm(request.POST, instance=selected_comment)
             if comment_form_instance.is_valid():
-                comment_form_instance.save()
-                messages.success(request, 'Comment updated successfully.')
+                edited_comment = comment_form_instance.save(commit=False)
+                edited_comment.approved = False
+                edited_comment.save()
+                messages.success(request, 'Comment updated successfully and is now awaiting approval.')
             else:
                 messages.error(request, 'Error updating comment.')
 
