@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load i18n %}
 
-{% block title %}{% trans "Sign In" %}{% endblock %}
+{% block title %}Sign In{% endblock %}
 
 {% block content %}
 <div class="container">
@@ -12,8 +12,9 @@
           <h1 class="card-title text-center mb-4">{% trans "Sign In" %}</h1>
 
           <p class="card-text text-center">
-            {% blocktrans %}If you don't have an account, then please
-            <a href="{{ signup_url }}" class="text-decoration-none">SIGN UP</a> first.{% endblocktrans %}
+            {% trans "If you don't have an account, then please" %} 
+            <a href="{{ signup_url }}" class="text-decoration-none">{% trans "SIGN UP" %}</a>
+            {% trans "first." %}
           </p>
 
           {% if form.errors %}
