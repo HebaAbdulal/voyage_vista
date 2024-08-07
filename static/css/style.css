@@ -38,12 +38,24 @@ body {
     position: relative;
 }
 
+.container .img-fluid {
+    width: 100%;
+    height: auto;
+    max-width: 100%;
+    display: block;
+}
+
 .image-flash {
     position: absolute;
     bottom: 5%;
     min-width: 30%;
     left: -2px;
     background-color: #23BBBB;
+}
+
+.scale {
+    width: 100%;
+    height: auto;
 }
 
 .author {
@@ -56,35 +68,35 @@ body {
     margin-top: 10px;
     overflow: hidden;
     position: relative;
-    display: inline-block;
-    height: 33vh;
+    display: flex;
+
+    align-items: center;
     width: 100%;
 }
 
 .masthead-text {
-    background-color: #445261;
+    background-color: #343b3b;
     color: white;
-    position: relative;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: left;
+    width: 30%;
 }
 
 .masthead-image {
     position: relative;
     overflow: hidden;
+    flex-grow: 1;
+    width: 60%;
 }
 
-.masthead-image:after {
-    content: "";
-    position: absolute;
-    top: 0;
-    right: 90%;
-    height: 100%;
-    width: 150%;
-    background: #445261;
-    -webkit-transform: skew(15deg);
-    -moz-transform: skew(15deg);
-    transform: skew(15deg);
-    z-index: 100;
+.masthead-image img {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 10px;
 }
+
 
 .post-link {
     text-decoration: none;
@@ -163,4 +175,31 @@ body {
     color: #E84610;
     border: none;
     background: transparent;
+}
+
+
+/* Add this to your CSS file */
+.search-form {
+    display: flex;
+    margin-bottom: 20px;
+}
+
+.search-form input[type="text"] {
+    flex: 1;
+    padding: 5px;
+}
+
+.search-form button {
+    padding: 5px 10px;
+}
+
+.color {
+color: #21a1a1;
+}
+
+
+@media (min-width: 768px) {
+    .d-none {
+        display: block !important;
+    }
 }
