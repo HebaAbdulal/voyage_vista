@@ -19,3 +19,5 @@ urlpatterns = [
     path('rate-post/<slug:post_slug>/', rate_post, name='rate_post'),
     path('post/<slug:slug>/edit/', EditPostView.as_view(), name='edit_post'),
     path('my-posts/', MyPostsView.as_view(), name='my_posts'),
+    path('search/', SearchPostListView.as_view(), name='search_posts'),
+]
