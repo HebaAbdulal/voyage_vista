@@ -2,23 +2,46 @@
 
 {% block content %}
 {% load static %}
-<div class="container mt-5">
+<div class="container-fluid">
     <h1>My Bookmarks</h1>
-    <ul>
-        {% for post in user_bookmarks %}
-        <div class="col-md-4">
-            <div class="card mb-4">
-                <img class="card-img-top" src="{% static 'images/default.jpg' %}" alt="placeholder image">
-                <div class="card-body">
-                    <h5 class="card-title">{{ post.title }}</h5>
-                    <p class="card-text">{{ post.excerpt }}</p>
-                    <a href="{% url 'post_detail' post.slug %}" class="btn btn-custom">Read More</a>
+    <div class="row">
+        <div class="col-12 mt-3">
+            <div class="row">
+                <div class="col-12 mb-3">
+                    <ul class="nav nav-pills">
+                    </ul>
+                </div>
+                {% for post in bookmarked_posts %}
+                <div class="col-md-3">
+                    <div class="card mb-4">
+                        <img class="card-img-top" src="{% if post.featured_image %}{{ post.featured_image.url }}{% else %}{% static 'images/default.jpg' %}{% endif %}" alt="placeholder image">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ post.title }}</h5>
+                            <p class="card-text">{{ post.excerpt }}</p>
+                            <a href="{% url 'post_detail' post.slug %}" class="btn btn-custom">Read More</a>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <p>You have not bookmarked any posts yet.</p>
+                {% endfor %}
+                <div class="pagination">
+                    <span class="step-links">
+                        {% if page_obj.has_previous %}
+                            <a href="?page=1">&laquo; First</a>
+                            <a href="?page={{ page_obj.previous_page_number }}">Previous</a>
+                        {% endif %}
+                        <span class="current">
+                            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+                        </span>
+                        {% if page_obj.has_next %}
+                            <a href="?page={{ page_obj.next_page_number }}">Next</a>
+                            <a href="?page={{ page_obj.paginator.num_pages }}">Last &raquo;</a>
+                        {% endif %}
+                    </span>
                 </div>
             </div>
         </div>
-        {% empty %}
-        <p>You have not bookmarked any posts yet.</p>
-        {% endfor %}
-    </ul>
+    </div>
 </div>
 {% endblock %}
