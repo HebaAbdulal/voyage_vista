@@ -3,14 +3,21 @@
 {% load static %}
 
 {% block content %}
-<div class="container mt-5">
+<div class="container-fluid">
     <h1>My Posts</h1>
 
     <h2>Approved Posts</h2>
-    <ul>
-        {% for post in approved_posts %}
-        <div class="col-md-4">
-            <div class="card mb-4">
+    <div class="row">
+        <div class="col-12 mt-3">
+            <div class="row">
+                <div class="col-12 mb-3">
+                    <ul class="nav nav-pills">
+                        
+                    </ul>
+                </div>
+                {% for post in approved_posts %}
+                <div class="col-md-3">
+                <div class="card mb-4">
                 <img class="card-img-top" src="{% if post.featured_image %}{{ post.featured_image.url }}{% else %}{% static 'images/default.jpg' %}{% endif %}" alt="placeholder image">
                 <div class="card-body">
                     <h5 class="card-title">{{ post.title }}</h5>
@@ -22,13 +29,19 @@
         {% empty %}
         <p>You have no approved posts.</p>
         {% endfor %}
-    </ul>
-
+    </div>
     <h2>Awaiting Approval</h2>
-    <ul>
-        {% for post in pending_posts %}
-        <div class="col-md-4">
-            <div class="card mb-4">
+    <div class="row">
+        <div class="col-12 mt-3">
+            <div class="row">
+                <div class="col-12 mb-3">
+                    <ul class="nav nav-pills">
+                        
+                    </ul>
+                </div>
+                {% for post in pending_posts %}
+                <div class="col-md-3">
+                <div class="card mb-4">
                 <img class="card-img-top" src="{% if post.featured_image %}{{ post.featured_image.url }}{% else %}{% static 'images/default.jpg' %}{% endif %}" alt="placeholder image">
                 <div class="card-body">
                     <h5 class="card-title">{{ post.title }}</h5>
@@ -40,6 +53,38 @@
         {% empty %}
         <p>You have no posts awaiting approval.</p>
         {% endfor %}
-    </ul>
+    </div>
+    <!-- Approved posts pagination controls -->
+    <div class="pagination">
+        <span class="step-links">
+            {% if approved_page_obj.has_previous %}
+                <a href="?page=1">&laquo; First</a>
+                <a href="?page={{ approved_page_obj.previous_page_number }}">Previous</a>
+            {% endif %}
+            <span class="current">
+                Page {{ approved_page_obj.number }} of {{ approved_page_obj.paginator.num_pages }}.
+            </span>
+            {% if approved_page_obj.has_next %}
+                <a href="?page={{ approved_page_obj.next_page_number }}">Next</a>
+                <a href="?page={{ approved_page_obj.paginator.num_pages }}">Last &raquo;</a>
+            {% endif %}
+        </span>
+    </div>
+    <!-- Pending posts pagination controls -->
+    <div class="pagination">
+        <span class="step-links">
+            {% if pending_page_obj.has_previous %}
+                <a href="?page=1">&laquo; First</a>
+                <a href="?page={{ pending_page_obj.previous_page_number }}">Previous</a>
+            {% endif %}
+            <span class="current">
+                Page {{ pending_page_obj.number }} of {{ pending_page_obj.paginator.num_pages }}.
+            </span>
+            {% if pending_page_obj.has_next %}
+                <a href="?page={{ pending_page_obj.next_page_number }}">Next</a>
+                <a href="?page={{ pending_page_obj.paginator.num_pages }}">Last &raquo;</a>
+            {% endif %}
+        </span>
+    </div>
 </div>
 {% endblock %}
