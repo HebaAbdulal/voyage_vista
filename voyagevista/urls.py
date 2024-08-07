@@ -6,7 +6,7 @@ from .views import AddPostView, MyLikesView, MyCommentsView, MyBookmarksView, Co
 urlpatterns = [
     path('', HomeView.as_view(), name='home'),
     path('category/<slug:category_slug>/', views.category_view, name='category'),
-    path('post/<slug:slug>/', views.PostDetailView.as_view(), name='post_detail'),
+    path('post/<slug:slug>/', PostDetailView.as_view(), name='post_detail'),
     path('add-post/', AddPostView.as_view(), name='add_post'),
     path('post/<slug:slug>/like/', views.PostLike.as_view(), name='post_like'),
     path('comment/<slug:slug>/<int:pk>/edit/', CommentEdit.as_view(), name='edit_comment'),
