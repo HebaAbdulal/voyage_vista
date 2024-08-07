@@ -1,18 +1,38 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="container mt-5">
+<div class="container-fluid">
     <h1>My Comments</h1>
     <div class="list-group">
         {% for comment in user_comments %}
-        <a href="{% url 'post_detail' comment.post.slug %}" class="list-group-item list-group-item-action">
-            <h5 class="mb-1">{{ comment.post.title }}</h5>
-            <p class="mb-1">{{ comment.body }}</p>
-            <small>Posted on {{ comment.created_on }}</small>
-        </a>
-        {% empty %}
-        <p>You have not made any comments yet.</p>
-        {% endfor %}
+            <div class="col-md-3">
+                <div class="card mb-4">
+                    <a href="{% url 'post_detail' comment.post.slug %}" class="list-group-item list-group-item-action">
+                        <h5 class="mb-1">{{ comment.post.title }}</h5>
+                        <p class="mb-1">{{ comment.body }}</p>
+                        <small>Posted on {{ comment.created_on }}</small>
+                    </a>
+                </div>
+            </div>
+            {% empty %}
+            <p>You have not made any comments yet.</p>
+            {% endfor %}
+            </div>
+            <div class="pagination">
+                <span class="step-links">
+                    {% if page_obj.has_previous %}
+                        <a href="?page=1">&laquo; First</a>
+                        <a href="?page={{ page_obj.previous_page_number }}">Previous</a>
+                    {% endif %}
+                    <span class="current">
+                        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+                    </span>
+                    {% if page_obj.has_next %}
+                        <a href="?page={{ page_obj.next_page_number }}">Next</a>
+                        <a href="?page={{ page_obj.paginator.num_pages }}">Last &raquo;</a>
+                    {% endif %}
+                </span>
+            </div>
     </div>
 </div>
 {% endblock %}
