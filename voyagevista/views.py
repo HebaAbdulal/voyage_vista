@@ -141,6 +141,7 @@ class PostDetailView(View):
             'commented': request.user.is_authenticated and selected_post.comments.filter(author=request.user).exists(),
         })
 
+
 @method_decorator(login_required, name='dispatch')
 class PostBookmark(View):
     """
@@ -156,6 +157,7 @@ class PostBookmark(View):
             messages.success(request, 'Post bookmarked.')
 
         return redirect('post_detail', slug=slug)
+
 
 @method_decorator(login_required, name='dispatch')
 class CommentEdit(View):
@@ -191,6 +193,7 @@ class CommentEdit(View):
             "comment_form": comment_form_instance,
             "post": selected_post,
         })
+
         
 @method_decorator(login_required, name='dispatch')
 class CommentDeleteView(View):
@@ -230,6 +233,7 @@ class CommentDeleteView(View):
         messages.success(request, "Comment Deleted Successfully")
         return redirect("post_detail", slug=slug)
 
+
 @method_decorator(login_required, name='dispatch')
 class PostLike(View):
     """
@@ -242,6 +246,7 @@ class PostLike(View):
         else:
             selected_post.likes.add(request.user)
         return HttpResponseRedirect(reverse("post_detail", args=[slug]))
+
 
 @method_decorator(login_required, name='dispatch')
 class DeletePostView(View):
@@ -265,6 +270,7 @@ class DeletePostView(View):
         else:
             messages.error(request, 'You do not have permission to delete this post.')
             return redirect(reverse('post_detail', args=[slug]))
+
 
 class MyLikesView(LoginRequiredMixin, ListView):
     """
@@ -295,6 +301,7 @@ class MyLikesView(LoginRequiredMixin, ListView):
         context['page_obj'] = posts_page
 
         return context
+
 
 class MyCommentsView(LoginRequiredMixin, ListView):
     """
@@ -392,6 +399,7 @@ class AddPostView(LoginRequiredMixin, CreateView):
         messages.success(self.request, 'Your post is awaiting approval.')
         return redirect(self.success_url)
 
+
 def rate_post(request, post_slug):
     """
     View function to handle rating of posts by authenticated users via JSON POST requests.
@@ -431,6 +439,7 @@ def rate_post(request, post_slug):
             return JsonResponse({'success': False, 'error': str(e)}, status=500)
 
     return JsonResponse({'success': False}, status=400)
+
 
 @method_decorator(login_required, name='dispatch')
 class EditPostView(View):

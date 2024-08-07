@@ -6,15 +6,16 @@
 <div class="masthead">
     <div class="container">
         <div class="row g-0">
-            <div class="col-md-6 masthead-text">
+            <div class="d-none col-md-6 masthead-text">
                 <h1 class="post-title">{{ post.title }}</h1>
+                <h2 class="post-category">{{ post.category}}</h2>
                 <p class="post-subtitle">{{ post.author }} | {{ post.created_on }}</p>
             </div>
-            <div class="d-none d-md-block col-md-6 masthead-image">
+            <div class="d-md-block col-md-6 masthead-image">
                 {% if "placeholder" in post.featured_image.url %}
-                    <img src="{% static 'images/default.jpg' %}" width="100%">
+                    <img src="{% static 'images/default.jpg' %}" class="scale" alt="placeholder">
                 {% else %}
-                    <img src="{{ post.featured_image.url }}" width="100%">
+                    <img src="{{ post.featured_image.url }}" class="scale" alt="{{ post.title }}">
                 {% endif %}
             </div>
         </div>
@@ -53,7 +54,6 @@
                                     <button type="submit" name="post_id" value="{{post.slug}}" class="btn-bookmark"><i class="far fa-bookmark"></i></button>
                                 {% endif %}
                             </form>
-                            <span class="text-secondary">{{ post.number_of_comments }}</span>
                         {% else %}
                             <span class="text-secondary"><i class="far fa-heart"></i></span>
                             <span class="text-secondary"><i class="far fa-comments"></i></span>
@@ -63,22 +63,22 @@
                         <!-- Display comments -->
                         <span class="text-secondary"><i class="far fa-comments"></i></span> 
                     </div>
-                    <!-- Rating Section -->
-                    {% if user.is_authenticated %}
-                    <div class="row">
-                        <div class="col-md-8 card mb-4 mt-3">
-                            <h3>Rate this post:</h3>
-                            <div class="card-body">
-                                <div class="rating-container">
-                                    <span class="star" data-value="1">&#9733;</span>
-                                    <span class="star" data-value="2">&#9733;</span>
-                                    <span class="star" data-value="3">&#9733;</span>
-                                    <span class="star" data-value="4">&#9733;</span>
-                                    <span class="star" data-value="5">&#9733;</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                     <!-- Rating Section -->
+                     {% if user.is_authenticated %}
+                     <div class="row">
+                         <div class="col-md-8 card mb-4 mt-3">
+                             <h3>Rate this post:</h3>
+                             <div class="card">
+                                 <div>
+                                     <span class="star" data-value="1">&#9733;</span>
+                                     <span class="star" data-value="2">&#9733;</span>
+                                     <span class="star" data-value="3">&#9733;</span>
+                                     <span class="star" data-value="4">&#9733;</span>
+                                     <span class="star" data-value="5">&#9733;</span>
+                                 </div>
+                             </div>
+                         </div>
+                     </div>
                     {% else %}
                         <div class="row">
                             <div class="col-md-8 card mb-4 mt-3">
