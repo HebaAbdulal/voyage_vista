@@ -123,6 +123,16 @@ class Comment(models.Model):
         """
         return self.comments.filter(approved=True).count()
 
+
+class Reply(models.Model):
+    comment = models.ForeignKey(Comment, on_delete=models.CASCADE, related_name='replies')
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    body = models.TextField()
+    created_on = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.body[:20]
+
 class Rating(models.Model):
     """
     Model representing a rating on post
