@@ -197,3 +197,12 @@ DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'hebaabdulal24@gmail.com'  # Your Gmail address
+EMAIL_HOST_PASSWORD = 'tpwo uhdb reuk jrvd'  # Your Gmail password or app-specific password
+DEFAULT_FROM_EMAIL = 'hebaabdulal24@gmail.com'  # The email address used as the sender
