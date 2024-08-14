@@ -163,7 +163,13 @@ class PostBookmark(View):
 
 @method_decorator(login_required, name='dispatch')
 class CommentEdit(View):
+    """
+    View to handle editing of comments by authenticated users.
+    """
     def get(self, request, slug=None, pk=None, *args, **kwargs):
+        """
+        Render the edit comment form if the user is authorized to edit the comment.
+        """
         selected_post = get_object_or_404(Post, slug=slug, status=1)
         selected_comment = get_object_or_404(Comment, pk=pk, post=selected_post)
         if request.user.id != selected_comment.author.id:
@@ -176,6 +182,9 @@ class CommentEdit(View):
         })
 
     def post(self, request, slug=None, pk=None, *args, **kwargs):
+        """
+        Process the edit comment form submission and update the comment if valid.
+        """
         selected_post = get_object_or_404(Post, slug=slug, status=1)
         selected_comment = get_object_or_404(Comment, pk=pk, post=selected_post)
         if request.user.id != selected_comment.author.id:
@@ -199,7 +208,13 @@ class CommentEdit(View):
         
 @method_decorator(login_required, name='dispatch')
 class CommentDeleteView(View):
+    """
+    View to handle deletion of comments by authenticated users.
+    """
     def get(self, request, slug=None, pk=None, *args, **kwargs):
+        """
+        Render the post detail page with a failure message if the comment cannot be deleted.
+        """
         selected_post = get_object_or_404(Post, slug=slug, status=1)
         comment_queryset = selected_post.comments.filter(pk=pk)
         selected_comment = get_object_or_404(comment_queryset)
@@ -224,6 +239,9 @@ class CommentDeleteView(View):
         })
 
     def post(self, request, slug=None, pk=None, *args, **kwargs):
+        """
+        Handle the POST request to delete a comment if the user has permission.
+        """
         selected_post = get_object_or_404(Post, slug=slug, status=1)
         selected_comment = get_object_or_404(Comment, pk=pk, post=selected_post)
         
@@ -252,7 +270,13 @@ class PostLike(View):
 
 @method_decorator(login_required, name='dispatch')
 class DeletePostView(View):
+    """
+    View to handle deletion of posts by authenticated users.
+    """
     def get(self, request, slug=None, *args, **kwargs):
+        """
+        Handle GET request to delete a post if the user is authorized.
+        """
         selected_post = get_object_or_404(Post, slug=slug)
         if request.user.id == selected_post.author.id:
             selected_post.delete()
@@ -264,6 +288,9 @@ class DeletePostView(View):
     
     
     def post(self, request, slug, *args, **kwargs):
+        """
+        Handle POST request to delete a post if the user is authorized.
+        """
         selected_post = get_object_or_404(Post, slug=slug)
         if request.user == selected_post.author:
             selected_post.delete()
@@ -389,12 +416,18 @@ class MyPostsView(LoginRequiredMixin, TemplateView):
 
         
 class AddPostView(LoginRequiredMixin, CreateView):
+    """
+    View to handle the creation of new posts by authenticated users.
+    """
     model = Post
     form_class = PostForm
     template_name = 'add_post.html'
     success_url = reverse_lazy('home')
 
     def form_valid(self, form):
+        """
+        Set the post author and status, then save the post.
+        """
         form.instance.author = self.request.user
         form.instance.status = 0
         response = super().form_valid(form)
@@ -445,9 +478,15 @@ def rate_post(request, post_slug):
 
 @method_decorator(login_required, name='dispatch')
 class EditPostView(View):
+    """
+    View to handle editing of posts by authenticated users.
+    """
     success_url = 'post_detail'  # Ensure this URL name exists in your urls.py
 
     def get(self, request, slug):
+        """
+        Render the edit post form if the user is authorized to edit the post.
+        """
         post = get_object_or_404(Post, slug=slug)
         if request.user == post.author or request.user.is_superuser:
             form = PostForm(instance=post)
@@ -457,6 +496,9 @@ class EditPostView(View):
             return redirect('post_detail', slug=slug)
 
     def post(self, request, slug):
+        """
+        Process the edit post form submission and update the post if valid.
+        """
         post = get_object_or_404(Post, slug=slug)
         if request.user == post.author or request.user.is_superuser:
             form = PostForm(request.POST, request.FILES, instance=post)
@@ -473,12 +515,18 @@ class EditPostView(View):
 
         
 class SearchPostListView(ListView):
+    """
+    View to display a list of posts matching a search query.
+    """
     model = Post
     template_name = 'search_results.html'
     context_object_name = 'results'
     paginate_by = 10
 
     def get_queryset(self):
+        """
+        Filter posts based on the search query.
+        """
         query = self.request.GET.get('q')
         if query:
             return Post.objects.filter(
@@ -488,18 +536,26 @@ class SearchPostListView(ListView):
             return Post.objects.none()
 
     def get_context_data(self, **kwargs):
+        """
+        Add the search query to the context data.
+        """
         context = super().get_context_data(**kwargs)
         context['query'] = self.request.GET.get('q')
         return context
 
 
 class ContactView(FormView):
+    """
+    View to handle contact form submissions.
+    """
     template_name = 'contact.html'
     form_class = ContactForm
     success_url = reverse_lazy('contact_success')
 
     def form_valid(self, form):
-        # Send email
+        """
+        Send an email with the contact form details and redirect to success page.
+        """
         send_mail(
             f"Contact Form Submission from {form.cleaned_data['name']}",
             form.cleaned_data['message'],
@@ -510,4 +566,7 @@ class ContactView(FormView):
         return super().form_valid(form)
 
 class ContactSuccessView(TemplateView):
+    """
+    View to display the contact form submission success page.
+    """
     template_name = 'contact_success.html'

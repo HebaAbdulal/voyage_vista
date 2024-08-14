@@ -181,8 +181,6 @@ body {
     padding-left: 30%;
 }
 
-
-/* Add this to your CSS file */
 .search-form {
     display: flex;
     margin-bottom: 20px;
@@ -199,6 +197,25 @@ body {
 
 .color {
 color: #21a1a1;
+}
+
+.rating-container {
+    display: flex;
+    justify-content: center;
+}
+
+.star {
+    font-size: 2rem;
+    cursor: pointer;
+    color: grey;
+}
+.star.selected {
+    color: gold;
+}
+
+.success-message {
+color: green;
+font-weight: bold;
 }
 
 
