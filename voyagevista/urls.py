@@ -1,6 +1,6 @@
 from . import views
 from django.urls import path
-from .views import AddPostView, MyLikesView, MyCommentsView, MyBookmarksView, CommentEdit, CommentDeleteView, EditPostView, DeletePostView, MyPostsView, SearchPostListView, HomeView, PostDetailView, PostLike, PostBookmark, rate_post
+from .views import AddPostView, MyLikesView, MyCommentsView, MyBookmarksView, CommentEdit, CommentDeleteView, EditPostView, DeletePostView, MyPostsView, SearchPostListView, HomeView, PostDetailView, PostLike, PostBookmark, rate_post, ContactView, ContactSuccessView
 
 
 urlpatterns = [
@@ -20,4 +20,6 @@ urlpatterns = [
     path('post/<slug:slug>/edit/', EditPostView.as_view(), name='edit_post'),
     path('my-posts/', MyPostsView.as_view(), name='my_posts'),
     path('search/', SearchPostListView.as_view(), name='search_posts'),
+    path('contact/', ContactView.as_view(), name='contact'),
+    path('contact-success/', ContactSuccessView.as_view(), name='contact_success'),
 ]
