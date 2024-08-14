@@ -124,14 +124,11 @@ class Comment(models.Model):
         return self.comments.filter(approved=True).count()
 
 
-class Reply(models.Model):
-    comment = models.ForeignKey(Comment, on_delete=models.CASCADE, related_name='replies')
-    author = models.ForeignKey(User, on_delete=models.CASCADE)
-    body = models.TextField()
-    created_on = models.DateTimeField(auto_now_add=True)
+    class Meta:
+        ordering = ['created_on']
 
     def __str__(self):
-        return self.body[:20]
+        return f'Reply by {self.author} on {self.comment.post.title}'
 
 class Rating(models.Model):
     """
