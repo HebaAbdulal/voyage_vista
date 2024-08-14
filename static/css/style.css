@@ -177,6 +177,10 @@ body {
     background: transparent;
 }
 
+.padding {
+    padding-left: 30%;
+}
+
 
 /* Add this to your CSS file */
 .search-form {
