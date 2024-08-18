@@ -32,7 +32,12 @@ TEMPLATES_DIR = os.path.join(BASE_DIR, 'templates')
 SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+if development:
+    DEBUG = True
+else:
+    DEBUG = False
+# DEBUG = development
+print(development)
 
 ALLOWED_HOSTS = [
     'ckz8780-django-voyagevista-app-19845c20e94f.herokuapp.com',
@@ -203,6 +208,6 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'hebaabdulal24@gmail.com'  # Your Gmail address
+EMAIL_HOST_USER =   'hebaabdulal24@gmail.com' # Your Gmail address
 EMAIL_HOST_PASSWORD = 'tpwo uhdb reuk jrvd'  # Your Gmail password or app-specific password
-DEFAULT_FROM_EMAIL = 'hebaabdulal24@gmail.com'  # The email address used as the sender
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
