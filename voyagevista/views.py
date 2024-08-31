@@ -471,7 +471,7 @@ class EditPostView(View):
     """
     View to handle editing of posts by authenticated users.
     """
-    success_url = 'post_detail'  # Ensure this URL name exists in your urls.py
+    success_url = 'post_detail'
 
     def get(self, request, slug):
         """
@@ -490,8 +490,11 @@ class EditPostView(View):
         Process the edit post form submission and update the post if valid.
         """
         post = get_object_or_404(Post, slug=slug)
+        
+        # Initialize form for both valid and invalid cases
+        form = PostForm(request.POST, request.FILES, instance=post)
+        
         if request.user == post.author or request.user.is_superuser:
-            form = PostForm(request.POST, request.FILES, instance=post)
             if form.is_valid():
                 edited_post = form.save(commit=False)
                 edited_post.approved = False  # Set post to awaiting approval
@@ -501,8 +504,12 @@ class EditPostView(View):
                 return redirect(self.success_url, slug=slug)  # Redirect to the post detail view
             else:
                 messages.error(request, 'Invalid input.')
+        else:
+            messages.error(request, 'You do not have permission to edit this post.')
+            return redirect('post_detail', slug=slug)
+        
         return render(request, 'edit_post.html', {'form': form, 'post': post})
-
+        
         
 class SearchPostListView(ListView):
     """
