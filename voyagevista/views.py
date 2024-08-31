@@ -20,6 +20,8 @@ from django.db import IntegrityError
 from django.db.models import Q
 from django.core.mail import send_mail
 from django.views.generic.edit import FormView
+from django.conf import settings
+from django.core.mail import EmailMessage
 
 
 def category_view(request, category_slug=None):
