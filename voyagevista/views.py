@@ -553,17 +553,20 @@ class ContactView(FormView):
         """
         Send an email with the contact form details and redirect to success page.
         """
-        send_mail(
-            f"Contact Form Submission from {form.cleaned_data['name']}",
-            form.cleaned_data['message'],
-            form.cleaned_data['email'],
-            ['your_email@example.com'],  # Replace with your email
-            fail_silently=False,
+        email = EmailMessage(
+            subject=f"Contact Form Submission from {form.cleaned_data['name']}",
+            body=form.cleaned_data['message'],
+            from_email='hebaabdulal24@gmail.com',
+            to=['hebaabdulal24@gmail.com'],
+            reply_to=[form.cleaned_data['email']]  # User's email for replies
         )
+        email.send(fail_silently=False)
         return super().form_valid(form)
 
+        
 class ContactSuccessView(TemplateView):
     """
     View to display the contact form submission success page.
     """
     template_name = 'contact_success.html'
+    
