@@ -120,3 +120,24 @@ class TestViews(TestCase):
         
         # Check for redirect
         self.assertEqual(response.status_code, 302)
+
+
+class TestEditPostView(TestCase):
+    """
+    Unit tests for the EditPostView in the VoyageVista app.
+    """
+    def setUp(self):
+        """
+        Create test users and posts.
+        """
+        self.user = User.objects.create_user(username='testuser', password='12345')
+        self.category = Category.objects.create(name='Test Category')  # Create a test category
+
+        self.post = Post.objects.create(
+            title="test title",
+            slug="test-title",
+            author=self.user,
+            content="Content of test post",
+            category=self.category,  # Assign the created category
+            status=1
+        )
