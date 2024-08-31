@@ -50,3 +50,19 @@ class TestViews(TestCase):
             posts,
             transform=lambda x: x
         )
+
+    def test_post_detail(self):
+        """
+        Test the post detail page.
+        """
+        post = self.post  # Use the post created in setUp
+        response = self.client.get(reverse('post_detail', args=[post.slug]))
+        self.assertEqual(response.status_code, 200)
+
+    def test_post_detail_template(self):
+        """
+        Test the correct template is used for the post detail page.
+        """
+        post = Post.objects.first()  # Get the first post
+        response = self.client.get(reverse('post_detail', args=[post.slug]))
+        self.assertTemplateUsed(response, template_name='post_detail.html')
