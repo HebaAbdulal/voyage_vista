@@ -83,3 +83,40 @@ class TestViews(TestCase):
         response = self.client.get(reverse('add_post'))
         self.assertEqual(response.status_code, 200)  # Ensure we get a 200 status
         self.assertTemplateUsed(response, template_name='add_post.html')  # Check for the correct template
+
+    def test_logged_out_user_redirected_from_add_post(self):
+        """
+        test to ensure logged out user is redirected
+        and can not access add blog post page
+        """
+        self.client.logout()
+        response = self.client.get(reverse('add_post'))
+        self.assertEqual(response.status_code, 302)
+
+    def test_adding_post(self):
+        """
+        Test that a logged-in user can add a post.
+        """
+        initial_count = Post.objects.count()
+        self.client.login(username='testuser', password='12345')
+        
+        # Data for new post
+        data = {
+            'title': 'Page Submitted Post',
+            'slug': 'page-submitted-post',
+            'content': 'Page submitted post content',
+            'status': 1
+        }
+        
+        response = self.client.post(reverse('add_post'), data)
+        
+        # Check if post count has increased by 1
+        self.assertEqual(Post.objects.count(), initial_count + 1)
+        
+        # Check for success message
+        messages = list(get_messages(response.wsgi_request))
+        self.assertEqual(len(messages), 1)
+        self.assertEqual(messages[0].tags, 'success')
+        
+        # Check for redirect
+        self.assertEqual(response.status_code, 302)
