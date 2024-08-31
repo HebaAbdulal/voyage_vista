@@ -26,3 +26,27 @@ class TestViews(TestCase):
             category=self.category,
             status=1
         )
+
+    def test_home_page(self):
+        response = self.client.get(reverse('home'))
+        self.assertEqual(response.status_code, 200)
+
+    def test_home_page_template(self):
+        """
+        Test the correct template is used for the home page.
+        """
+        response = self.client.get(reverse('home'))
+        self.assertTemplateUsed(response, template_name='index.html')
+
+    def test_posts_passed_into_template(self):
+        """
+        Test that the blog posts are passed into the blog template.
+        """
+        response = self.client.get(reverse('home'))
+        posts = Post.objects.all()
+        self.assertEqual(len(response.context['page_obj']), len(posts))
+        self.assertQuerySetEqual(
+            response.context['page_obj'],
+            posts,
+            transform=lambda x: x
+        )
