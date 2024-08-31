@@ -199,3 +199,34 @@ class TestEditPostView(TestCase):
         self.assertEqual(self.post.title, 'test title')
         self.assertEqual(self.post.content, 'Content of test post')
 
+    def test_edit_post_view_no_permission(self):
+        """
+        Test to ensure users who are not the author cannot edit the post.
+        """
+        # Create another user
+        other_user = User.objects.create_user(username='otheruser', password='12345')
+
+        # Log in as the other user
+        self.client.login(username='otheruser', password='12345')
+
+        data = {
+            'title': 'Malicious Update',
+            'category': self.category.id,
+            'content': 'Content by unauthorized user',
+        }
+        response = self.client.post(reverse('edit_post', kwargs={'slug': self.post.slug}), data)
+        self.assertEqual(response.status_code, 302)
+
+        # Check if redirected to the post detail
+        self.assertRedirects(response, reverse('post_detail', kwargs={'slug': self.post.slug}))
+
+        # Check for error message
+        messages = list(get_messages(response.wsgi_request))
+        self.assertEqual(len(messages), 1)
+        self.assertEqual(messages[0].message, 'You do not have permission to edit this post.')
+
+        # Verify the post has not been changed
+        self.post.refresh_from_db()
+        self.assertEqual(self.post.title, 'test title')
+        self.assertEqual(self.post.content, 'Content of test post')
+
