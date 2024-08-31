@@ -176,9 +176,6 @@ class PostBookmark(View):
 
 @method_decorator(login_required, name='dispatch')
 class CommentEdit(View):
-    """
-    View to handle editing of comments by authenticated users.
-    """
     def get(self, request, slug=None, pk=None, *args, **kwargs):
         """
         Render the edit comment form if the user is authorized to edit the comment.
@@ -226,30 +223,21 @@ class CommentDeleteView(View):
     """
     def get(self, request, slug=None, pk=None, *args, **kwargs):
         """
-        Render the post detail page with a failure message if the comment cannot be deleted.
+        Render the post detail page with a success or failure message.
         """
         selected_post = get_object_or_404(Post, slug=slug, status=1)
         comment_queryset = selected_post.comments.filter(pk=pk)
         selected_comment = get_object_or_404(comment_queryset)
+
+        # Check if the current user is the author of the comment
         if request.user.id != selected_comment.author.id:
             messages.error(request, 'You do not have permission to delete this comment.')
             return HttpResponseRedirect(reverse("post_detail", args=[slug]))
-        if selected_comment.delete():
-            messages.success(request, "Comment Deleted Successfully")
-            return redirect("post_detail", slug=slug)
-        else:
-            messages.error(request, "Comment Deletion Failed!")
-        approved_comments = selected_post.comments.filter(approved=True).order_by("-created_on")
-        is_liked = selected_post.likes.filter(id=request.user.id).exists()
-        return render(request, "post_detail.html", {
-            "is_post_user": (request.user.id == selected_post.author.id),
-            "status_message": "Comment Deletion Failed!",
-            "post": selected_post,
-            "comments": approved_comments,
-            "commented": False,
-            "liked": is_liked,
-            "comment_form": CommentForm(),
-        })
+
+        # Attempt to delete the comment
+        selected_comment.delete()
+        messages.success(request, "Comment Deleted Successfully")
+        return redirect("post_detail", slug=slug)
 
     def post(self, request, slug=None, pk=None, *args, **kwargs):
         """
@@ -286,17 +274,21 @@ class DeletePostView(View):
     """
     View to handle deletion of posts by authenticated users.
     """
-    def get(self, request, slug=None, *args, **kwargs):
+
+    def post(self, request, slug=None, *args, **kwargs):
         """
-        Handle GET request to delete a post if the user is authorized.
+        Handle POST request to delete a post if the user is authorized.
         """
         selected_post = get_object_or_404(Post, slug=slug)
+        print(f"User: {request.user.id}, Post Author: {selected_post.author.id}")  # Debug print
         if request.user.id == selected_post.author.id:
             selected_post.delete()
             messages.success(request, 'Post deleted successfully.')
+            print("Success message added")  # Debug print
             return redirect('home')
         else:
             messages.error(request, 'You do not have permission to delete this post.')
+            print("Error message added")  # Debug print
             return HttpResponseRedirect(reverse('post_detail', args=[slug]))
     
     
@@ -322,26 +314,19 @@ class MyLikesView(LoginRequiredMixin, ListView):
     template_name = 'my_likes.html'
     context_object_name = 'liked_posts'
     paginate_by = 4
+    ordering = ['-created_on']  # Ensure this is the correct field
+
+    def get_queryset(self):
+        return self.request.user.blog_likes.all().order_by('-created_on')
+
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-
-        # Access the related posts via the user relationship
-        liked_posts = self.request.user.blog_likes.all()
-
-        paginator = Paginator(liked_posts, self.paginate_by)
-        page = self.request.GET.get('page')
-
-        try:
-            posts_page = paginator.page(page)
-        except PageNotAnInteger:
-            posts_page = paginator.page(1)
-        except EmptyPage:
-            posts_page = paginator.page(paginator.num_pages)
-
-        context['liked_posts'] = posts_page
-        context['page_obj'] = posts_page
-
+        paginator = Paginator(self.get_queryset(), self.paginate_by)
+        page_number = self.request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
+        context['liked_posts'] = page_obj
+        context['page_obj'] = page_obj
         return context
 
 
@@ -448,36 +433,30 @@ class AddPostView(LoginRequiredMixin, CreateView):
         return redirect(self.success_url)
 
 
-def rate_post(request, post_slug):
-    """
-    View function to handle rating of posts by authenticated users via JSON POST requests.
-    """
-    if request.method == 'POST':
+class RatePostView(View):
+    def post(self, request, post_slug):
+        if not request.user.is_authenticated:
+            return JsonResponse({'success': False, 'error': 'User not authenticated.'}, status=401)
+
         try:
             data = json.loads(request.body)
             rating_value = data.get('rating')
-            
-            # Validate rating value
             if rating_value is None or not (1 <= rating_value <= 5):
                 return JsonResponse({'success': False, 'error': 'Invalid rating value.'}, status=400)
-            
-            # Get user and post objects
+
             user = request.user
             post = get_object_or_404(Post, slug=post_slug)
 
-            # Create or get existing rating object
-            rating, created = Rating.objects.get_or_create(user=user, post=post, defaults={'rating': 0})
+            rating, created = Rating.objects.get_or_create(user=user, post=post, defaults={'rating': rating_value})
+            if not created:
+                rating.rating = rating_value
+                rating.save()
 
-            # Update the rating value
-            rating.rating = rating_value
-            rating.save()
-
-            # Calculate average rating
             average_rating = Rating.objects.filter(post=post).aggregate(Avg('rating'))['rating__avg']
             post.average_rating = average_rating
             post.save()
 
-            return JsonResponse({'success': True})
+            return JsonResponse({'success': True, 'average_rating': average_rating})
 
         except json.JSONDecodeError:
             return JsonResponse({'success': False, 'error': 'Invalid JSON.'}, status=400)
@@ -485,9 +464,7 @@ def rate_post(request, post_slug):
             return JsonResponse({'success': False, 'error': 'Post not found.'}, status=404)
         except Exception as e:
             return JsonResponse({'success': False, 'error': str(e)}, status=500)
-
-    return JsonResponse({'success': False}, status=400)
-
+            
 
 @method_decorator(login_required, name='dispatch')
 class EditPostView(View):
