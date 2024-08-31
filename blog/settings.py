@@ -17,6 +17,7 @@ import dj_database_url
 if os.path.isfile('env.py'):
     import env
 from django.contrib.messages import constants as messages
+import sys
 
 
 development = os.environ.get('DEVELOPMENT', False)
@@ -43,11 +44,12 @@ ALLOWED_HOSTS = [
     'ckz8780-django-voyagevista-app-19845c20e94f.herokuapp.com',
     '8000-hebaabdulal-voyagevista-soofkoyfind.ws-eu114.gitpod.io',
     '8000-hebaabdulal-voyagevista-r2afsac2cai.ws-eu114.gitpod.io',
-    '8000-hebaabdulal-voyagevista-w73x1bwg780.ws.codeinstitute-ide.net',
+    '8000-hebaabdulal-voyagevista-mz9d4fu8z8z.ws.codeinstitute-ide.net',
+    'localhost', '127.0.0.1', 'testserver'
 ]
 
 CSRF_TRUSTED_ORIGINS = [
-    'https://8000-hebaabdulal-voyagevista-w73x1bwg780.ws.codeinstitute-ide.net',
+    'https://8000-hebaabdulal-voyagevista-mz9d4fu8z8z.ws.codeinstitute-ide.net',
     "https://*.gitpod.io",
     "https://*.codeanyapp.com",
     "https://*.herokuapp.com"
@@ -140,16 +142,17 @@ MESSAGE_TAGS = {
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
-#DATABASES = {
-#    'default': {
-#        'ENGINE': 'django.db.backends.sqlite3',
-#        'NAME': BASE_DIR / 'db.sqlite3',
-#    }
-#}
-
-DATABASES = {
-     'default': dj_database_url.parse(os.environ.get("DATABASE_URL", ""))
- }
+if development:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
+else:
+    DATABASES = {
+        'default': dj_database_url.parse(os.environ.get("DATABASE_URL", ""))
+    }
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
@@ -188,12 +191,6 @@ STATICFILES_STORAGE = 'cloudinary_storage.storage.StaticHashedCloudinaryStorage'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-# Cloudinary settings
-CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': 'do750l1sr',
-    'API_KEY': '381116349771517',
-    'API_SECRET': 'UcCcID0ADWt0lAMz-NHqJwTED8w',
-}
 
 MEDIA_URL = '/media/'
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
