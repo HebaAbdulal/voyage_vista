@@ -59,7 +59,15 @@ class HomeView(generic.ListView):
 
 
 class PostDetailView(View):
+    """
+    Handles the display of a single post's details, including comments, ratings, likes, and bookmarks.
+    Supports editing and deleting comments, submitting ratings, and adding new comments.
+    """
     def get(self, request, slug):
+        """
+        Display the post detail page, increment the view count, and retrieve user-specific data like 
+        comments, ratings, likes, and bookmarks.
+        """
         selected_post = get_object_or_404(Post, slug=slug)
         selected_post.number_of_views += 1
         selected_post.save()
@@ -85,6 +93,9 @@ class PostDetailView(View):
         })
 
     def post(self, request, slug):
+        """
+        Handle post-related actions such as editing/deleting comments, submitting ratings, and adding new comments.
+        """
         selected_post = get_object_or_404(Post, slug=slug)
         approved_comments = selected_post.comments.filter(approved=True).order_by("-created_on")
 
