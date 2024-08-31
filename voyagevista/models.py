@@ -110,6 +110,7 @@ class Comment(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name="commenter", default=1)
     email = models.EmailField()
     active = models.BooleanField(default=True)
+    content = models.TextField(default="Default content")
 
     class Meta:
         ordering = ['-created_on']
@@ -127,8 +128,6 @@ class Comment(models.Model):
     class Meta:
         ordering = ['created_on']
 
-    def __str__(self):
-        return f'Reply by {self.author} on {self.comment.post.title}'
 
 class Rating(models.Model):
     """
@@ -143,11 +142,3 @@ class Rating(models.Model):
     def __str__(self):
         return f"{self.user} - {self.post} - {self.rating}"
     
-    def calculate_average_rating(self):
-        """
-        Calculate the average rating for a post based on all ratings.
-        """
-        ratings = self.ratings.all()
-        if ratings:
-            return sum(rating.rating for rating in ratings) / ratings.count()
-        return 0

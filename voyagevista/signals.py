@@ -9,7 +9,7 @@ def update_post_rating_on_rating_save(sender, instance, created, **kwargs):
     """
     post = instance.post
     ratings = Rating.objects.filter(post=post)
-    sum_ratings = sum([rating.rating for rating in ratings])  # Ensure this is the correct field name
+    sum_ratings = sum([rating.rating for rating in ratings])
     count_ratings = ratings.count()
     average_rating = sum_ratings / count_ratings if count_ratings > 0 else 0
     post.average_rating = average_rating
