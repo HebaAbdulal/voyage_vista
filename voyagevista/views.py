@@ -187,12 +187,18 @@ class CommentEdit(View):
         selected_comment = get_object_or_404(Comment, pk=pk, post=selected_post)
         if request.user.id != selected_comment.author.id:
             messages.error(request, 'You do not have permission to edit this comment.')
-            return HttpResponseRedirect(reverse("post_detail", args=[slug]))
-        return render(request, "update_comment.html", {
+            return redirect('post_detail', slug=slug)
+
+        # Include the comment form in the context
+        context = {
             "status_message": "",
             "post": selected_post,
             "comment_form": CommentForm(instance=selected_comment),
-        })
+            "awaiting_comments": Comment.objects.filter(post=selected_post, approved=False),
+            "comments": Comment.objects.filter(post=selected_post, approved=True),
+            "commented": False
+        }
+        return render(request, "post_detail.html", context)
 
     def post(self, request, slug=None, pk=None, *args, **kwargs):
         """
@@ -211,12 +217,6 @@ class CommentEdit(View):
             return JsonResponse({'success': True, 'message': 'Comment updated successfully and is now awaiting approval.'})
         else:
             return JsonResponse({'success': False, 'error': 'Invalid input.'})
-        
-        messages.error(request, 'Invalid input.')
-        return render(request, "update_comment.html", {
-            "comment_form": comment_form_instance,
-            "post": selected_post,
-        })
 
         
 @method_decorator(login_required, name='dispatch')
