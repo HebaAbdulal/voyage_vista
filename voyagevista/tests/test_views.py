@@ -66,3 +66,20 @@ class TestViews(TestCase):
         post = Post.objects.first()  # Get the first post
         response = self.client.get(reverse('post_detail', args=[post.slug]))
         self.assertTemplateUsed(response, template_name='post_detail.html')
+
+    def test_add_post(self):
+        """
+        Test to see if user logged in can access add post page.
+        """
+        self.client.login(username='testuser', password='12345')  # Log in the user
+        response = self.client.get(reverse('add_post'))
+        self.assertEqual(response.status_code, 200)
+
+    def test_add_post_template(self):
+        """
+        Test the correct template is used for the add post page.
+        """
+        self.client.login(username='testuser', password='12345')  # Log in the user
+        response = self.client.get(reverse('add_post'))
+        self.assertEqual(response.status_code, 200)  # Ensure we get a 200 status
+        self.assertTemplateUsed(response, template_name='add_post.html')  # Check for the correct template
