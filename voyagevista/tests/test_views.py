@@ -141,3 +141,39 @@ class TestEditPostView(TestCase):
             category=self.category,  # Assign the created category
             status=1
         )
+    
+    def test_edit_post_view_get(self):
+        """
+        Test GET request for the edit post view.
+        """
+        self.client.login(username='testuser', password='12345')  # Log in the user
+        response = self.client.get(reverse('edit_post', kwargs={'slug': self.post.slug}))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'edit_post.html')
+        self.assertContains(response, 'name="title"')  # Check if the form has a title field
+        self.assertContains(response, 'name="content"')  # Check if the form has a content field
+
+    def test_edit_post_view_post_valid(self):
+        """
+        Test POST request with valid data to edit a post.
+        """
+        self.client.login(username='testuser', password='12345')  # Log in the user
+        data = {
+            'title': 'Updated Title',
+            'category': self.category.id,
+            'content': 'Updated content',
+        }
+        response = self.client.post(reverse('edit_post', kwargs={'slug': self.post.slug}), data)
+        self.assertEqual(response.status_code, 302)
+
+        # Refresh the post from the database and verify changes
+        self.post.refresh_from_db()
+        self.assertEqual(self.post.title, 'Updated Title')
+        self.assertEqual(self.post.content, 'Updated content')
+        self.assertFalse(self.post.approved)
+        self.assertEqual(self.post.status, 0)
+
+        # Check for success message
+        messages = list(get_messages(response.wsgi_request))
+        self.assertEqual(len(messages), 1)
+        self.assertEqual(messages[0].message, 'Post updated successfully and is now awaiting approval.')
