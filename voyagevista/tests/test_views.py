@@ -177,3 +177,25 @@ class TestEditPostView(TestCase):
         messages = list(get_messages(response.wsgi_request))
         self.assertEqual(len(messages), 1)
         self.assertEqual(messages[0].message, 'Post updated successfully and is now awaiting approval.')
+
+    def test_edit_post_view_post_invalid(self):
+        """
+        Test POST request with invalid data to ensure form errors are handled.
+        """
+        self.client.login(username='testuser', password='12345')  # Log in the user
+        data = {
+            'title': '',  # Invalid title
+            'category': self.category.id,
+            'content': 'Content without a valid title',
+        }
+        response = self.client.post(reverse('edit_post', kwargs={'slug': self.post.slug}), data)
+        self.assertEqual(response.status_code, 200)  # Should stay on the same page
+
+        # Check for form errors in the response
+        self.assertContains(response, 'This field is required.')
+
+        # Check if the post has not been updated
+        self.post.refresh_from_db()
+        self.assertEqual(self.post.title, 'test title')
+        self.assertEqual(self.post.content, 'Content of test post')
+
