@@ -124,3 +124,13 @@ class CommentFormTest(TestCase):
         self.assertEqual(comment.body, 'This is a test comment.')
         self.assertEqual(comment.post, self.post)
         self.assertEqual(comment.user, self.user)
+
+    
+    def test_invalid_form(self):
+        # Missing 'body'
+        form = CommentForm(data={})
+        self.assertFalse(form.is_valid())
+        self.assertIn('body', form.errors)
+
+        # Validate the error messages if required
+        self.assertEqual(form.errors['body'], ['This field is required.'])
