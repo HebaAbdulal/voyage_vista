@@ -442,3 +442,26 @@ class CommentDeleteViewTest(TestCase):
         # Create a comment
         self.comment = Comment.objects.create(post=self.post, author=self.user, content='This is a test comment', approved=True)
 
+    def test_get_delete_comment_form_valid_user(self):
+        """
+        Test that the comment is successfully deleted by the author.
+        """
+        # Log in as the author of the comment
+        self.client.login(username='testuser', password='testpassword')
+        
+        # Send GET request to delete the comment
+        response = self.client.get(reverse('delete_comment', kwargs={'slug': self.post.slug, 'pk': self.comment.pk}))
+        
+        # Assert that the user is redirected after deletion
+        self.assertEqual(response.status_code, 302)
+        
+        # Follow the redirect
+        response = self.client.get(response.url, follow=True)
+        
+        # Check that the success message is displayed
+        self.assertContains(response, "Comment Deleted Successfully")
+        
+        # Assert that the comment is deleted
+        with self.assertRaises(Comment.DoesNotExist):
+            Comment.objects.get(pk=self.comment.pk)
+
