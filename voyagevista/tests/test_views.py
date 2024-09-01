@@ -329,3 +329,33 @@ class MyLikesViewTest(TestCase):
         liked_posts = response.context['liked_posts']
         self.assertTrue(isinstance(liked_posts, Page))
         self.assertEqual(len(liked_posts.object_list), 4)  # Check if the default page size (4) is correct
+
+        # Check pagination
+        self.assertEqual(response.context['page_obj'].number, 1)
+
+        liked_post_titles = [post.title for post in liked_posts.object_list]
+        expected_titles = [post.title for post in self.posts[4:0:-1]]  # Fetch the first 4 posts and reverse
+        
+        for title in expected_titles:
+            self.assertIn(title, liked_post_titles)
+
+
+    def test_my_likes_view_pagination(self):
+        """
+        Test pagination of liked posts in MyLikesView.
+        """
+        url = reverse('my_likes') + '?page=2'
+        response = self.client.get(url)
+        
+        # Check for successful response
+        self.assertEqual(response.status_code, 200)
+        
+        # Check pagination to see if it handles pages correctly
+        liked_posts = response.context['liked_posts']
+        self.assertTrue(isinstance(liked_posts, Page))
+        self.assertEqual(liked_posts.number, 2)
+        
+        # Verify the posts on page 2
+        self.assertEqual(len(liked_posts.object_list), 1)
+        self.assertEqual(liked_posts.object_list[0].title, 'Post 1')
+
