@@ -587,4 +587,21 @@ class SearchPostListViewTest(TestCase):
         Post.objects.create(title='Second Post', slug='second-post', content='Content of the second post', author=self.user)
         Post.objects.create(title='Third Post', slug='third-post', content='Content of the third post', author=self.user)
 
+    def test_search_view_status_code(self):
+        # Perform a search query
+        response = self.client.get(reverse('search_posts'), {'q': 'first'})
+        
+        # Check if the status code is 200
+        self.assertEqual(response.status_code, 200)
+
+        # Verify that the correct template is used
+        self.assertTemplateUsed(response, 'search_results.html')
+
+        # Verify that the response context contains the search results
+        self.assertIn('results', response.context)
+        self.assertEqual(len(response.context['results']), 1)  # Expecting 1 result
+
+        # Verify that the search query is in the context
+        self.assertEqual(response.context['query'], 'first')
+
 
