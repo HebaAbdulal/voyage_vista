@@ -134,3 +134,30 @@ class CommentFormTest(TestCase):
 
         # Validate the error messages if required
         self.assertEqual(form.errors['body'], ['This field is required.'])
+
+
+class RatingFormTest(TestCase):
+    def setUp(self):
+        # Create a dummy user
+        self.user = User.objects.create_user(username='testuser', password='password')
+        
+        # Create a category
+        self.category = Category.objects.create(name='Destinations', slug='destinations')
+
+        # Create a post for the rating to be associated with
+        self.post = Post.objects.create(
+            title='Test Post',
+            content='This is a test content.',
+            excerpt='This is a test excerpt.',
+            author=self.user,
+            approved=True,
+            category=self.category
+        )
+
+        # Setup valid and invalid test data
+        self.valid_data = {
+            'rating': 5,
+        }
+        self.invalid_data = {
+            'rating': 11,
+        }
