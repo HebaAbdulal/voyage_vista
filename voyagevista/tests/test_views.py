@@ -288,3 +288,26 @@ class TestDeletePostView(TestCase):
         response = self.client.post(reverse('delete_post', kwargs={'slug': post.slug}))
         self.assertEqual(response.status_code, 302)
         self.assertEqual(Post.objects.count(), 1)
+
+
+class MyLikesViewTest(TestCase):
+
+    def setUp(self):
+        self.user = User.objects.create_user(username='testuser', password='testpass')
+        logged_in = self.client.login(username='testuser', password='testpass')
+        self.assertTrue(logged_in, "Login failed in setUp method")
+        
+        self.category = Category.objects.create(name='Test Category')
+        
+        self.posts = [
+            Post.objects.create(
+                title=f"Post {i}",
+                slug=f"post-{i}",
+                author=self.user,
+                content=f"Content of test post {i}",
+                category=self.category,
+                status=1
+            ) for i in range(1, 10)  # Create 9 posts
+        ]
+        
+        self.user.blog_likes.set(self.posts[:5])  # The user likes the first 5 posts
