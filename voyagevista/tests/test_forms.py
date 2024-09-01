@@ -161,3 +161,16 @@ class RatingFormTest(TestCase):
         self.invalid_data = {
             'rating': 11,
         }
+    
+    def test_valid_form(self):
+        form = RatingForm(data=self.valid_data)
+        self.assertTrue(form.is_valid())
+
+        # Check if the form saves the data correctly
+        rating = form.save(commit=False)
+        rating.post = self.post
+        rating.user = self.user
+        rating.save()
+
+        self.assertEqual(rating.rating, 5)
+        self.assertTrue(Rating.objects.filter(id=rating.id).exists())
