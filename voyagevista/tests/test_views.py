@@ -359,3 +359,30 @@ class MyLikesViewTest(TestCase):
         self.assertEqual(len(liked_posts.object_list), 1)
         self.assertEqual(liked_posts.object_list[0].title, 'Post 1')
 
+
+class CommentEditTest(TestCase):
+    """
+    Test case for editing comments in the CommentEdit view.
+    """
+    def setUp(self):
+        """
+        Set up the test environment by creating a user, a post, and a comment.
+        """
+        self.user = User.objects.create_user(username='testuser', password='password')
+        self.other_user = User.objects.create_user(username='otheruser', password='password')
+        self.post = Post.objects.create(
+            title='Test Post',
+            slug='test-post',
+            content='This is a test post.',
+            author=self.user,
+            created_on=timezone.now(),
+            status=1
+        )
+        self.comment = Comment.objects.create(
+            post=self.post,
+            author=self.user,
+            body='This is a test comment.',
+            approved=True
+        )
+        self.url = reverse('edit_comment', kwargs={'slug': self.post.slug, 'pk': self.comment.pk})
+
