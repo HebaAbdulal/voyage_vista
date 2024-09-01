@@ -311,3 +311,21 @@ class MyLikesViewTest(TestCase):
         ]
         
         self.user.blog_likes.set(self.posts[:5])  # The user likes the first 5 posts
+
+    def test_my_likes_view(self):
+        """
+        Test that the MyLikesView displays liked posts correctly.
+        """
+        url = reverse('my_likes')
+        response = self.client.get(url)
+        
+        # Check for successful response
+        self.assertEqual(response.status_code, 200)
+        
+        # Check that the correct template is used
+        self.assertTemplateUsed(response, 'my_likes.html')
+        
+        # Check that the context contains liked posts
+        liked_posts = response.context['liked_posts']
+        self.assertTrue(isinstance(liked_posts, Page))
+        self.assertEqual(len(liked_posts.object_list), 4)  # Check if the default page size (4) is correct
