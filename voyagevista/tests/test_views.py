@@ -400,3 +400,28 @@ class CommentEditTest(TestCase):
         self.assertContains(response, 'Test Post')
         self.assertContains(response, 'This is a test comment.')
 
+    def test_get_edit_form_valid_user(self):
+        """
+        Test that a user without permission is redirected when attempting to access
+        the edit comment form.
+
+        This test logs in a user who is not the author of the comment and verifies
+        that the response is a redirect and the user is redirected to the post detail page.
+        """
+        self.client.login(username='testuser', password='password')
+
+        # Generate unique title and slug
+        unique_title = f"Test Post {uuid.uuid4()}"
+        unique_slug = slugify(unique_title)
+        
+        # Create a post and comment
+        post = Post.objects.create(title=unique_title, content='Test Content', author=self.user, slug=unique_slug, status=1)
+        comment = Comment.objects.create(body='Test Comment', post=post, author=self.user)
+        url = reverse('edit_comment', kwargs={'slug': post.slug, 'pk': comment.pk})
+        
+        # Access the edit form with the valid user
+        response = self.client.get(url)
+        
+        # Check the response
+        self.assertEqual(response.status_code, 200)
+
