@@ -576,3 +576,15 @@ class RatePostViewTest(TestCase):
         self.assertEqual(rating.rating, 4)
 
 
+class SearchPostListViewTest(TestCase):
+    def setUp(self):
+        # Set up a test user and create sample posts
+        self.user = User.objects.create_user(username='testuser', password='password')
+        self.client = Client()
+        
+        # Create some posts
+        Post.objects.create(title='First Post', slug='first-post', content='Content of the first post', author=self.user)
+        Post.objects.create(title='Second Post', slug='second-post', content='Content of the second post', author=self.user)
+        Post.objects.create(title='Third Post', slug='third-post', content='Content of the third post', author=self.user)
+
+
