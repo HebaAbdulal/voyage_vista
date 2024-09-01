@@ -501,3 +501,22 @@ class CommentDeleteViewTest(TestCase):
         # Assert that the comment is not deleted
         self.assertTrue(Comment.objects.filter(pk=self.comment.pk).exists())
 
+
+class PostBookmarkViewTest(TestCase):
+    """
+    Test suite for the PostBookmark view.
+    """
+
+    def setUp(self):
+        # Create a user
+        self.user = User.objects.create_user(username='testuser', password='testpassword')
+        
+        # Create a post
+        self.post = Post.objects.create(
+            title='Test Post', 
+            content='This is a test post content.', 
+            author=self.user, 
+            status=1, 
+            slug='test-post'
+        )
+
