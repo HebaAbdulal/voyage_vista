@@ -110,3 +110,17 @@ class CommentFormTest(TestCase):
         self.valid_data = {
             'body': 'This is a test comment.',
         }
+    
+    def test_valid_form(self):
+        form = CommentForm(data=self.valid_data)
+        self.assertTrue(form.is_valid())
+
+        # Check if the form saves the data correctly
+        comment = form.save(commit=False)
+        comment.post = self.post
+        comment.user = self.user
+        comment.save()
+
+        self.assertEqual(comment.body, 'This is a test comment.')
+        self.assertEqual(comment.post, self.post)
+        self.assertEqual(comment.user, self.user)
