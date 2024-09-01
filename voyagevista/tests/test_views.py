@@ -385,4 +385,18 @@ class CommentEditTest(TestCase):
             approved=True
         )
         self.url = reverse('edit_comment', kwargs={'slug': self.post.slug, 'pk': self.comment.pk})
+    
+    def test_get_edit_form_valid_user(self):
+        """
+        Test that a logged-in user with permission can access the edit comment form.
+
+        This test logs in a user who is the author of the comment and verifies that
+        the response status is 200 and the correct template and content are used.
+        """
+        self.client.login(username='testuser', password='12345')
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'post_detail.html')
+        self.assertContains(response, 'Test Post')
+        self.assertContains(response, 'This is a test comment.')
 
