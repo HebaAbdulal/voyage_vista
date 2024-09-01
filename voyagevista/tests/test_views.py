@@ -487,3 +487,17 @@ class CommentDeleteViewTest(TestCase):
         # Assert that the comment is not deleted
         self.assertTrue(Comment.objects.filter(pk=self.comment.pk).exists())
 
+    def test_get_delete_comment_form_unauthenticated_user(self):
+        """
+        Test that an unauthenticated user cannot delete a comment.
+        """
+        # Send GET request to delete the comment without logging in
+        response = self.client.get(reverse('delete_comment', kwargs={'slug': self.post.slug, 'pk': self.comment.pk}))
+        
+        # Assert that the user is redirected to the login page
+        self.assertEqual(response.status_code, 302)
+        self.assertIn('/accounts/login/', response.url)
+        
+        # Assert that the comment is not deleted
+        self.assertTrue(Comment.objects.filter(pk=self.comment.pk).exists())
+
