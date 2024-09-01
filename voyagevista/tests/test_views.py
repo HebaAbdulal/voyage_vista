@@ -465,3 +465,25 @@ class CommentDeleteViewTest(TestCase):
         with self.assertRaises(Comment.DoesNotExist):
             Comment.objects.get(pk=self.comment.pk)
 
+    def test_get_delete_comment_form_invalid_user(self):
+        """
+        Test that the comment cannot be deleted by someone other than the author.
+        """
+        # Log in as a different user
+        self.client.login(username='otheruser', password='testpassword')
+        
+        # Send GET request to delete the comment
+        response = self.client.get(reverse('delete_comment', kwargs={'slug': self.post.slug, 'pk': self.comment.pk}))
+        
+        # Assert that the user is redirected
+        self.assertEqual(response.status_code, 302)
+        
+        # Follow the redirect
+        response = self.client.get(response.url, follow=True)
+        
+        # Check that the error message is displayed
+        self.assertContains(response, 'You do not have permission to delete this comment.')
+        
+        # Assert that the comment is not deleted
+        self.assertTrue(Comment.objects.filter(pk=self.comment.pk).exists())
+
