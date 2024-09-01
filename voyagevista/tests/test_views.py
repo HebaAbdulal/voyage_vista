@@ -425,3 +425,20 @@ class CommentEditTest(TestCase):
         # Check the response
         self.assertEqual(response.status_code, 200)
 
+
+class CommentDeleteViewTest(TestCase):
+    """
+    Test suite for the CommentDeleteView.
+    """
+    
+    def setUp(self):
+        # Create users
+        self.user = User.objects.create_user(username='testuser', password='testpassword')
+        self.other_user = User.objects.create_user(username='otheruser', password='testpassword')
+        
+        # Create a post
+        self.post = Post.objects.create(title='Test Post', content='This is a test post', author=self.user, status=1, slug='test-post')
+        
+        # Create a comment
+        self.comment = Comment.objects.create(post=self.post, author=self.user, content='This is a test comment', approved=True)
+
