@@ -556,4 +556,23 @@ class RatePostViewTest(TestCase):
             author=self.user
         )
 
+    def test_rate_post_successful(self):
+        url = reverse('rate_post', kwargs={'post_slug': self.post.slug})
+        data = {'rating': 4}
+        response = self.client.post(url, data, content_type='application/json')
+
+        # Check that the response status code is 200 OK
+        self.assertEqual(response.status_code, 200)
+
+        # Check that the response contains the expected success message
+        self.assertEqual(response.json()['success'], True)
+
+        # Check that the average rating is calculated correctly
+        average_rating = response.json()['average_rating']
+        self.assertEqual(average_rating, 4.0)
+
+        # Verify that the rating has been saved in the database
+        rating = Rating.objects.get(user=self.user, post=self.post)
+        self.assertEqual(rating.rating, 4)
+
 
