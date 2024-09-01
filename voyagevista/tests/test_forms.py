@@ -182,3 +182,18 @@ class RatingFormTest(TestCase):
 
         # Validate the error messages if required
         self.assertEqual(form.errors['rating'], ['Rating must be between 1 and 10.'])
+
+
+class ContactFormTest(TestCase):
+    def setUp(self):
+        # Set up valid and invalid test data
+        self.valid_data = {
+            'name': 'John Doe',
+            'email': 'john.doe@example.com',
+            'message': 'This is a test message.',
+        }
+        self.invalid_data = {
+            'name': '',  # Empty name
+            'email': 'invalid-email',  # Invalid email format
+            'message': '',  # Empty message
+        }
