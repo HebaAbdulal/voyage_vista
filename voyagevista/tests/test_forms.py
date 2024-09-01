@@ -174,3 +174,11 @@ class RatingFormTest(TestCase):
 
         self.assertEqual(rating.rating, 5)
         self.assertTrue(Rating.objects.filter(id=rating.id).exists())
+
+    def test_invalid_form(self):
+        form = RatingForm(data=self.invalid_data)
+        self.assertFalse(form.is_valid())
+        self.assertIn('rating', form.errors)
+
+        # Validate the error messages if required
+        self.assertEqual(form.errors['rating'], ['Rating must be between 1 and 10.'])
