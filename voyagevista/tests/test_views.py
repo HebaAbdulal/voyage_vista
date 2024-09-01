@@ -604,4 +604,26 @@ class SearchPostListViewTest(TestCase):
         # Verify that the search query is in the context
         self.assertEqual(response.context['query'], 'first')
 
+    def test_search_view_no_results(self):
+        # Perform a search query that should return no results
+        response = self.client.get(reverse('search_posts'), {'q': 'nonexistent'})
+        
+        # Check if the status code is 200
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.context['results']), 0)
+        self.assertContains(response, 'No posts found.')
+
+    def test_search_view_empty_query(self):
+        # Perform a search with an empty query
+        response = self.client.get(reverse('search_posts'), {'q': ''})
+        
+        # Check if the status code is 200
+        self.assertEqual(response.status_code, 200)
+
+        # Verify that no results are found
+        self.assertEqual(len(response.context['results']), 0)
+        
+        # Verify that the "No posts found" message is displayed
+        self.assertContains(response, 'No posts found.')
+
 
