@@ -53,3 +53,60 @@ class PostFormTest(TestCase):
         self.assertEqual(post.excerpt, 'This is a test excerpt.')
         self.assertEqual(post.category, self.category1)
         self.assertFalse(post.approved)
+
+    def test_invalid_form(self):
+        # Missing title
+        form = PostForm(data={
+            'content': 'This is a test content.',
+            'excerpt': 'This is a test excerpt.',
+            'category': self.category1.id,
+        })
+        self.assertFalse(form.is_valid())
+        self.assertIn('title', form.errors)
+
+    @patch('cloudinary.uploader.upload', return_value={
+        'url': 'http://example.com/image.jpg',
+        'public_id': 'test_public_id',
+        'version': 1234567890,
+        'signature': 'abcdef1234567890',
+        'width': 800,
+        'height': 600,
+        'format': 'jpg',
+        'resource_type': 'image',
+        'created_at': '2023-08-01T00:00:00Z',
+        'secure_url': 'https://example.com/image.jpg',
+        'type': 'upload'
+    })
+    def test_save_method(self, mock_upload):
+        form = PostForm(data=self.valid_data, files={'featured_image': self.image_file})
+        if not form.is_valid():
+            self.fail("Form is not valid")
+        
+        post = form.save(commit=False)
+        post.author = self.user  # Assign the author
+        post.save()
+
+        self.assertFalse(post.approved)
+        self.assertTrue(Post.objects.filter(id=post.id).exists())
+
+
+class CommentFormTest(TestCase):
+    def setUp(self):
+        # Create a dummy user
+        self.user = User.objects.create_user(username='testuser', password='password')
+        
+        # Create a category and a post for the comment to be associated with
+        self.category = Category.objects.create(name='Test Category', slug='test-category')
+        self.post = Post.objects.create(
+            title='Test Post',
+            content='This is a test content.',
+            excerpt='This is a test excerpt.',
+            author=self.user,
+            approved=True,
+            category=self.category
+        )
+
+        # Setup valid test data
+        self.valid_data = {
+            'body': 'This is a test comment.',
+        }
