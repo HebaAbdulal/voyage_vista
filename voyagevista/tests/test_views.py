@@ -253,3 +253,38 @@ class TestDeletePostView(TestCase):
             category=self.category,
             status=1
         )
+
+    def test_delete_post(self):
+        """
+        Test that a post is deleted successfully by the author.
+        """
+        post = Post.objects.get(title='test title')
+        self.assertEqual(Post.objects.count(), 1)
+
+        # Attempt to delete the post
+        response = self.client.post(reverse('delete_post', kwargs={'slug': post.slug}))
+
+        # Check for redirect to home page after successful deletion
+        self.assertRedirects(response, reverse('home'))
+
+        # Check if post is deleted
+        self.assertEqual(Post.objects.count(), 0)
+
+        # Check if success message is in messages
+        messages = list(get_messages(response.wsgi_request))
+        self.assertEqual(len(messages), 1)
+        self.assertEqual(messages[0].tags, 'success')
+        self.assertIn('Post deleted successfully.', messages[0].message)
+
+    def test_logged_out_user_delete_blog_post(self):
+        """
+        Test if the user is logged out
+        that they can't delete a post
+        by sending the request to the url
+        """
+        post = Post.objects.get(title='test title')
+        self.assertEqual(Post.objects.count(), 1)
+        self.client.logout()
+        response = self.client.post(reverse('delete_post', kwargs={'slug': post.slug}))
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(Post.objects.count(), 1)
