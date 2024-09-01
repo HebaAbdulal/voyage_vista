@@ -520,3 +520,23 @@ class PostBookmarkViewTest(TestCase):
             slug='test-post'
         )
 
+    def test_post_bookmark_view_status_code(self):
+        """
+        Test that the bookmark view returns a 200 status code after bookmarking.
+        """
+        self.client.login(username='testuser', password='testpassword')
+        response = self.client.post(reverse('post_bookmark', kwargs={'slug': self.post.slug}))
+        
+        # Assert the response is a redirect (302)
+        self.assertEqual(response.status_code, 302)
+
+        # Follow the redirect to the post detail page
+        response = self.client.get(reverse('post_detail', kwargs={'slug': self.post.slug}))
+
+        # Assert that the response is 200 OK
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Post bookmarked.")
+        
+        # Check that the post is actually bookmarked by the user
+        self.assertTrue(self.post.saves.filter(id=self.user.id).exists())
+
