@@ -197,3 +197,21 @@ class ContactFormTest(TestCase):
             'email': 'invalid-email',  # Invalid email format
             'message': '',  # Empty message
         }
+
+    def test_valid_form(self):
+        form = ContactForm(data=self.valid_data)
+        self.assertTrue(form.is_valid())
+
+    def test_invalid_form(self):
+        form = ContactForm(data=self.invalid_data)
+        self.assertFalse(form.is_valid())
+        
+        # Check if the errors are correctly identified
+        self.assertIn('name', form.errors)  # Should fail due to empty name
+        self.assertIn('email', form.errors)  # Should fail due to invalid email format
+        self.assertIn('message', form.errors)  # Should fail due to empty message
+        
+        # Validate the error messages if required
+        self.assertEqual(form.errors['name'], ['This field is required.'])
+        self.assertEqual(form.errors['email'], ['Enter a valid email address.'])
+        self.assertEqual(form.errors['message'], ['This field is required.'])
