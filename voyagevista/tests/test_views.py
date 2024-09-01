@@ -627,3 +627,18 @@ class SearchPostListViewTest(TestCase):
         self.assertContains(response, 'No posts found.')
 
 
+class ContactSuccessViewTest(TestCase):
+    def setUp(self):
+        self.client = Client()
+
+    def test_contact_success_view_status_code(self):
+        # Access the contact success page
+        response = self.client.get(reverse('contact_success'))
+        
+        # Check if the status code is 200
+        self.assertEqual(response.status_code, 200)
+
+        # Verify that the correct template is used
+        self.assertTemplateUsed(response, 'contact_success.html')
+
+
