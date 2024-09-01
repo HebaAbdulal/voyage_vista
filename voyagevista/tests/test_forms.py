@@ -39,4 +39,17 @@ class PostFormTest(TestCase):
         'secure_url': 'https://example.com/image.jpg',
         'type': 'upload'  # Ensure 'type' is included
     })
-    
+    def test_valid_form(self, mock_upload):
+        form = PostForm(data=self.valid_data, files={'featured_image': self.image_file})
+        self.assertTrue(form.is_valid())
+        
+        # Assign the author after form validation
+        post = form.save(commit=False)
+        post.author = self.user  # Assign the author
+        post.save()
+
+        self.assertEqual(post.title, 'Test Post')
+        self.assertEqual(post.content, 'This is a test content.')
+        self.assertEqual(post.excerpt, 'This is a test excerpt.')
+        self.assertEqual(post.category, self.category1)
+        self.assertFalse(post.approved)
