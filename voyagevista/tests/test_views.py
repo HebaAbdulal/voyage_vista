@@ -1,7 +1,15 @@
 from django.test import TestCase, Client
 from django.urls import reverse
-from voyagevista.models import Post
-
+from voyagevista.models import Post, User, Category, Comment, Rating
+from django.contrib.messages import get_messages
+from voyagevista.forms import PostForm, CommentForm
+from django.core.paginator import Paginator, Page
+from datetime import datetime, timedelta
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
+from django.utils import timezone
+from django.utils.text import slugify
+import uuid
 
 
 class TestViews(TestCase):
