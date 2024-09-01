@@ -540,3 +540,20 @@ class PostBookmarkViewTest(TestCase):
         # Check that the post is actually bookmarked by the user
         self.assertTrue(self.post.saves.filter(id=self.user.id).exists())
 
+
+class RatePostViewTest(TestCase):
+    def setUp(self):
+        # Create a test user and log them in
+        self.user = User.objects.create_user(username='testuser', password='password')
+        self.client = Client()
+        self.client.login(username='testuser', password='password')
+
+        # Create a test post with the logged-in user as the author
+        self.post = Post.objects.create(
+            title='Test Post', 
+            slug='test-post', 
+            content='Test Content', 
+            author=self.user
+        )
+
+
