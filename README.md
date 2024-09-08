@@ -233,3 +233,25 @@ MoSCoW is a prioritization technique used to classify requirements into categori
 - **Won't Have:** Features that are not necessary for the current project phase.
 For VoyageVista, "Must Have" might include user authentication and post creation, while "Could Have" could include advanced search filters, dashboard and sorting options.
 
+## User Stories, Milestones and Epics
+### User stories
+User Stories are concise descriptions of tasks or needs from the user's perspective. They are written in plain language, focusing on what the user wants to achieve and the value or outcome they seek, rather than technical details.
+
+| Title | User Story | MoSCoW Priority | Milestone |
+|-------|------------|----------|-----------|
+| Seamless sign up Experience | As a user, I **want** a seamless **sign-up** experience so that I can quickly **create** an account and start using the website without any hassle. | **MUST HAVE** | User Authentication |
+| Logout | As a **registered user**, I want to **log out** securely, so that my **account remains safe** when I am not using it. | **MUST HAVE** | User Authentication |
+| Add Post | As a **registered user**, I want to be able to **add a new post** easily, so that I can **share** my thoughts or content with others. | **MUST HAVE** | User Engagement |
+| Create drafts | As a **website owner**, I want the ability to **create** draft posts, so that I can **work on writing** the content gradually and finalize it at a later time. | **MUST HAVE** | Content Mangement and Moderation |
+| Seamless Login Experience | As a **registered user**, after logging in, I **expect** the login and sign up buttons to **disappear** from the navigation bar, and a sign out button to **appear** instead. | **MUST HAVE** | User Authentication |
+| My Likes | As a **registered user**, I want to **see** a list of all the posts I have liked, so that I can easily **access** content that I found interesting or valuable. | **SHOULD HAVE** | User Engagement |
+| Browse Posts with Pagination | As a user, I want to **view a paginated list** of posts, so that I can easily **navigate through** multiple posts and select which ones I want to read. | **SHOULD HAVE** | Content Discovery |
+| Browse Categories | As a **user**, I want to easily **find blog posts** on topics of interest by browsing through different categories so that I can quickly **access** content that is relevant to me. | **SHOULD HAVE** | Cotent Discovery |
+| Easy Contact Option | As a **registered user**, I want to easily **contact** the website administrators so that I can **make inquiries** or provide feedback. | **SHOULD HAVE** | Cotent Discovery |
+| Quick Search Functionality | As a **user**, I want to **search** for specific destinations, hotels, or adventures, so I can **find** relevant information quickly. | **SHOULD HAVE** | Cotent Discovery |
+| Rating Posts | As a **registered user**, I want to **rate** destinations, hotels, and adventures based on my experiences so that I can **share** my feedback and help others make informed decisions. | **COULD HAVE** | User Engagement |
+| Delete Comments | As a **registered user**, I want to be able to **delete** my comments on a post so that I **have control** over my participation in discussions and can remove comments I no longer wish to be associated with. | **COULD HAVE** | User Engagement |
+| Bookmarking | As a **registered user**, I want to **bookmark** posts or destinations that I **find** interesting so that I can easily reference them in the future. | **COULD HAVE** | User Engagement |
+| My Bookmarks | As a **registered user**, I want to **access** a list of posts I have bookmarked, so that I can quickly **find** content I saved for later. | **COULD HAVE** | User Engagement |
+| Edit comments on a post | As a **registered user**, I want to be able to **edit** my comments on a post so that I can **correct** or clarify my contributions, ensuring they remain accurate and relevant. | **COULD HAVE** | User Engagement |
+
