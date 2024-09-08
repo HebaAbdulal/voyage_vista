@@ -709,4 +709,22 @@ These static pages provide users with information about the website, the team, a
   - Django Pagination: Handles the pagination logic, allowing comments to be split across multiple pages.
   - JQuery: Provides additional interactivity on the frontend, particularly for handling AJAX requests, form submission, and comment edit actions.
 
+## Deployment
+  - Gunicorn: A Python WSGI HTTP Server used to run the Django application in production.
+  - Nginx: A web server used for serving static files, load balancing, and as a reverse proxy in production environments.
+  - Heroku/AWS EC2/DigitalOcean: (Pick based on your deployment platform) Used to deploy the application to a cloud environment for public access.
+  - AWS S3: For serving static and media files (images, CSS, JS) in a scalable manner.
+  - Docker (optional): For containerizing the application to ensure consistency between development, staging, and production environments.
+## Version Control
+  - Git: The version control system used to track changes in the project.
+  - GitHub/GitLab: (Pick the relevant one) Used as the remote repository to host the code, collaborate with other developers, and track issues and pull requests.
+  - Heroku: Platform as a service (PaaS) for deploying applications.
+
+## Validation Tools
+- [**W3C Markup Validation Service**](https://validator.w3.org/): For validating HTML5 code.
+- [**W3C CSS Validation Service**](https://jigsaw.w3.org/css-validator/): For validating CSS3 code.
+- [**JSHint**](https://jshint.com/): A tool that helps to detect errors and potential problems in JavaScript code.
+- [**CI Python Linter**](https://pep8ci.herokuapp.com/): Analyzes Python code to look for bugs and signs of poor quality.
+- [**Google Lighthouse**](https://developers.google.com/web/tools/lighthouse): For auditing performance, accessibility, and search engine optimization of web pages.
+
 
