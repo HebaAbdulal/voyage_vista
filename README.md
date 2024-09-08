@@ -343,4 +343,47 @@ Scope Verification: Regular reviews and validation to confirm that project deliv
 
 The Scope Plane ensures that all project aspects are well-defined and understood, helping to avoid scope creep and ensuring that the project delivers what is expected within the agreed-upon constraints.
 
+## Structural Plane
+
+The Structural Plane defines how the website is organized and navigated, focusing on information architecture, navigation, and interaction design to enhance user experience.
+
+- Content Organisation
+    - Homepage:
+      - Purpose: Acts as the entry point to the site, providing an overview of key content and facilitating quick access to major categories.
+      - Features:
+        - Featured Content: Highlights popular or new posts, destinations, and tips.
+        - Category Overview: Direct links to main categories like Destinations, Accommodation, and Travel Tips.
+        - Search Bar: Prominent search functionality for easy content discovery.
+
+    - Category Pages:
+      - Purpose: Dedicated pages for each major category, allowing users to explore content specific to their interests.
+      - Features:
+        - Articles and Posts: Lists of posts and articles categorized under each topic.
+
+    - Post Detail Pages:
+      - Purpose: Provides in-depth content on selected posts, offering comprehensive information and user interaction options.
+      - Features:
+        - Full Content Display: Detailed text, images, and multimedia elements related to the post.
+        - User Interaction: Options for commenting, rating, and liking/unliking.
+
+    - About & Contact Pages:
+      - Purpose: Facilitates user interactions and provides information about the site and its administrators.
+      - Features:
+        - About Page: Information about the site’s purpose, team, and mission.
+        - Contact Page: Contact form or details for reaching out to the website administrators.
+
+    - Registration and Sign-In Pages:
+      - Purpose: Allows users to create accounts and log in for personalized interactions.
+      - Features:
+        - Registration Form: Fields for new users to sign up.
+        - Login Form: Fields for existing users to log in.
+
+    - Dahboard Page:
+      - Purpose: Personal space for users to manage their activities and preferences.
+      - Features:
+        - My Posts: List of posts authored by the user.
+        - My Bookmarks and Likes: Shows content bookmarked or liked by the user.
+        - My Comments: List of comments made by the user.
+        - My Likes: List of posts liked by the user.
+
 
