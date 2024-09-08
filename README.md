@@ -464,4 +464,52 @@ The Structural Plane defines how the website is organized and navigated, focusin
   ![Sign out wireframe](static/wireframes/signout.png)
   </details>
 
+### Database Schema- Entity Relationship Diagram
+  I utilized dbdiagram to create the ERD for this project.
+
+  #### Database Schema
+  The architecture of the Software Stacks application is built on a well-organized database schema, ensuring streamlined data management and efficient retrieval processes. Below is an overview of how the database is structured and the relationships between its various components.
+
+  [dbdiagram](https://dbdiagram.io/d/66a404f48b4bb5230e7997fd)
+
+  #### Entity Relationship Diagram (ERD)
+  The ERD visually represents the database schema of Software Stacks. It outlines the system's key tables, their attributes, and how these tables are interconnected within the overall structure.
+
+  <details>
+  <summary>Click to view The Database Schema</summary>
+
+  ![Database Schema](static/wireframes/dbdiagram.png)
+  </details>
+
+  #### Tables Overview
+
+- **User**: Represents the individuals who interact with the platform. Each user has a unique ID and profile details (e.g., username, email). Users can perform actions like posting content, commenting, rating, liking, and saving posts.
+
+- **Post**:  This entity holds the main content created by users. Each post has a title, description, associated category, and is linked to the user who created it. Posts can also include media such as images and can be rated, liked, and bookmarked by other users.
+
+- **Comment**: Comments allow users to provide feedback or engage in discussions on posts. Each comment is tied to both the post and the user who made the comment. Comments can be edited or deleted by the user who made them.
+
+- **Category**: Represents different topics or types of content (e.g., destinations, accommodations, travel tips). Posts are organized into these categories to make content browsing easier for users.
+
+- **Rating**: Represents user ratings on posts, destinations, hotels, or adventures. Users can assign a rating to a post based on their experience, which helps others make informed decisions.
+
+- **PostLikes**: Tracks the posts that users have liked. Each entry links a user with a specific post they liked, allowing users to express appreciation for content.
+
+- **PostSaves**: Manages the posts that users have saved or bookmarked for future reference. This allows users to easily revisit posts they find valuable or interesting.
+
+#### Relationships
+
+- **One-to-Many**:
+  - User to Post (One user can author many posts).
+  - User to Comment (One user can write many comments).
+  - User to Rating (One user can give many ratings).
+  - Post to Comment (One post can have many comments).
+  - Post to Rating (One post can have many ratings).
+- **Many-to-One**:
+  - Post to Category (Many posts belong to one category).
+  - PostLikes to Post (Many users can like one post).
+  - PostSaves to Post (Many users can save one post).
+- **Many-to-Many**:
+  - This relationship is implicit in PostLikes and PostSaves, where many users can interact with many posts (via likes or saves), though represented as many-to-one links to the Post and User tables.
+
 
