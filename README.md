@@ -255,3 +255,56 @@ User Stories are concise descriptions of tasks or needs from the user's perspect
 | My Bookmarks | As a **registered user**, I want to **access** a list of posts I have bookmarked, so that I can quickly **find** content I saved for later. | **COULD HAVE** | User Engagement |
 | Edit comments on a post | As a **registered user**, I want to be able to **edit** my comments on a post so that I can **correct** or clarify my contributions, ensuring they remain accurate and relevant. | **COULD HAVE** | User Engagement |
 
+
+### Milestones
+Milestones in a project serves as a key checkpoint or goal along the project's timeline. It signifies the completion of a major phase, the achievement of a crucial objective, or the meeting of an important deadline. Milestones are essential for monitoring progress, setting deadlines, and ensuring alignment among team members and stakeholders regarding major project events or accomplishments. Unlike individual tasks or user stories, milestones do not involve direct work but act as indicators that a significant portion of the project has been completed.
+
+### Epics
+Epics are large bodies of work that can be broken down into smaller, more manageable tasks or user stories. They represent significant features or functionalities that contribute to the overall goal of the project.
+
+- User Engagement and Interaction
+
+  - Description: This epic encompasses all user interactions with posts, comments, and personal engagement features.
+  - Associated User Stories:
+    - Rating posts.
+    - Delete comments on a post.
+    - Edit comment on a post.
+    - Bookmarking.
+    - Edit post.
+    - Delete post.
+    - Like/Unlike posts.
+    - My Cooments.
+    - My Likes.
+    - My Bookmarks.
+    - My Posts.
+    - Leave a comment.
+    
+- Content Discovery and Management
+
+  - Description: This epic includes all functionalities related to discovering, browsing, and managing content on the platform.
+  - Associated User Stories:
+      - Browsing categories.
+      - Open Post.
+      - Browsing posts without login.
+      - Browse posts with pagination.
+      - Easy Contact Option.
+      - Quick Search Functionality.
+      - Browse and Discover New Travel Experiences.
+
+- User Authentication and Account Management
+
+  - Description: This epic covers all features related to user authentication, registration, and account management.
+  - Associated User Stories:
+    - Seamless Signup Experience.
+    - Logout.
+    - Seamless Login Experience.
+    - Implement Authentication State Handling.
+
+- Content Management and Moderation
+  - Description: This epic focuses on all functionalities related to managing, moderating, and curating content on the platform.
+  - Associated User Stories:
+    - Moderate User-Generated Content.
+    - Manage Recommended Content.
+    - Approve Comments.
+    - Create drafts.
+
