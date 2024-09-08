@@ -17,29 +17,40 @@ $(document).ready(function() {
 
     const csrftoken = getCookie('csrftoken');
 
-    // Log the CSRF token and its length
-    console.log('CSRF Token:', csrftoken);
-    console.log('CSRF Token Length:', csrftoken.length);
+    // Ensure postSlug and userRating are logged
+    console.log('Post Slug:', postSlug);
+    console.log('User Rating:', userRating);
 
     // Star rating handling
     $('.star').on('click', function() {
-        var rating = $(this).data('value');
+        const rating = $(this).data('value');
 
         $.ajax({
             type: 'POST',
-            url: '/rate-post/' + postSlug + '/', // URL to the Django view
+            url: `/rate-post/${postSlug}/`, // Correctly use the postSlug variable here
             headers: { 'X-CSRFToken': csrftoken }, // Use the CSRF token from the cookie
             data: JSON.stringify({ rating: rating }),
             contentType: 'application/json',
             success: function(response) {
+                console.log('AJAX Success:', response); // Debugging
                 if (response.success) {
                     updateStars(rating);
                     $('#average-rating').text(response.average_rating.toFixed(1)); // Update average rating display
+
+                    // Display the success message
+                    $('#message-container')
+                        .text(response.message)
+                        .removeClass() // Remove any existing classes
+                        .addClass('alert alert-success') // Add Bootstrap success classes
+                        .fadeIn() // Fade in the message
+                        .delay(3000) // Wait for 3 seconds
+                        .fadeOut(); // Fade out the message
                 } else {
                     alert('Error submitting rating: ' + response.error);
                 }
             },
             error: function(xhr, status, error) {
+                console.error('AJAX Error:', xhr.responseText); // Debugging
                 alert('Error submitting rating: ' + xhr.responseText);
             }
         });
@@ -48,7 +59,7 @@ $(document).ready(function() {
     // Hover effect for stars
     $('.star').hover(
         function() {
-            var rating = $(this).data('value');
+            const rating = $(this).data('value');
             updateStars(rating);
         }, function() {
             updateStars(userRating); // Restore user's rating on hover out

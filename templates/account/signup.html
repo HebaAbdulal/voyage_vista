@@ -7,7 +7,7 @@
 {% block content %}
 <div class="container text-center p-5">
     <h1 class="display-4">{% trans "Create an Account" %}</h1>
-    <p>{% blocktrans %}Already have an account?{% endblocktrans %} <a href="{% url 'account_login' %}" class="text-decoration-none">{% trans "Sign In" %}</a> {% blocktrans %}here.{% endblocktrans %}</p>
+    <p>{% blocktrans %}Already have an account?{% endblocktrans %} <a class="color" href="{% url 'account_login' %}" class="text-decoration-none">{% trans "Sign In" %}</a> {% blocktrans %}here.{% endblocktrans %}</p>
     <form class="form p-2" id="signup_form" method="post" action="{% url 'account_signup' %}">
         {% csrf_token %}
         {% if form.non_field_errors %}
