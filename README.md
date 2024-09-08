@@ -169,3 +169,28 @@ Voyage Vista’s UX is built around key design principles to ensure a positive e
 - **Consistency:** A consistent layout, color scheme, and typography are used throughout the site to create a cohesive and familiar experience for users as they browse different pages.
 - **Responsiveness:** The website is fully responsive, ensuring that users have a smooth experience whether they’re accessing it from a desktop, tablet, or mobile device.
 - **Accessibility:** Voyage Vista is designed to be accessible to all users, including those with disabilities. Features like alt text for images, clear headings, and an intuitive navigation structure make the platform easy to use for everyone.
+
+# Design
+Voyage Vista’s design is crafted to enhance user engagement and provide a visually appealing and functional experience. The design elements focus on creating a cohesive and immersive environment that complements the website's travel content.
+
+## Color Scheme
+The colour scheme of Voyage Vista is inspired by a refreshing travel aesthetic, incorporating a palette that reflects tranquility and adventure. Key colors include:
+
+- **Primary Color:** A calming teal (#23bbbb) used for navigation bars and buttons, creating a soothing visual experience.
+- **Accent Colors:** Complementary shades like dark teal (#1fa3a3) and white for text and backgrounds, ensuring readability and contrast.
+- **Neutral Colors:** Subtle greys and off-whites for backgrounds and secondary elements, maintaining a clean and professional look.
+The chosen colors enhance the website's overall ambiance, aligning with the theme of exploration and travel.
+
+![Color Scheme Image](static/documentation/color_scheme.png)
+
+## Fonts
+Voyage Vista employs a well-selected combination of fonts to ensure readability and aesthetic appeal.
+
+- **Google Fonts**
+    - Roboto: A versatile and modern font used for body text. It features a balanced design that improves readability and accessibility.
+    - Lato: This font complements Roboto and is used for headings and subheadings. Its slightly rounded design provides a friendly and approachable feel.
+- **Usage:**
+    - Roboto: Applied for general content, including articles and descriptions, ensuring clear and easy-to-read text.
+    - Lato: Used for headings, navigation items, and call-to-action buttons, adding emphasis and improving visual hierarchy.
+By integrating these fonts, Voyage Vista achieves a harmonious design that enhances the user experience through clear, readable text and a visually appealing layout.
+
