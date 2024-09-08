@@ -512,4 +512,119 @@ The Structural Plane defines how the website is organized and navigated, focusin
 - **Many-to-Many**:
   - This relationship is implicit in PostLikes and PostSaves, where many users can interact with many posts (via likes or saves), though represented as many-to-one links to the Post and User tables.
 
+# Project Features
+## Existing Features
+The project includes a variety of features designed to enhance user engagement, content discovery, and interaction with the platform. These features provide both registered and unregistered users with access to posts, categories, and ratings, while allowing registered users to engage more deeply with content by creating, managing, and interacting with posts, comments, and ratings. Below is a table summarizing the access levels and CRUD functionality for each feature.
+
+| Feature                | Unregistered User Access | Registered User Access | CRUD Functionality         |
+|------------------------|--------------------------|-------------------------|----------------------------|
+| View Posts              | Yes                      | Yes                     | Read                       |
+| Create Post             | No                       | Yes                     | Create                      |
+| Edit/Delete Post        | No                       | Yes (own posts only)     | Update, Delete             |
+| Like/Unlike Posts       | No                       | Yes                     | Create, Delete (like)      |
+| Comment on Posts        | No                       | Yes                     | Create, Update, Delete, Read     |
+| Bookmark Posts          | No                       | Yes                     | Create, Delete (bookmark)  |
+| Rate Posts          | No                       | Yes                     | Create, Read (rating)  |
+| View Dashboard          | No                       | Yes                     | Read (own data)            |
+| View Categories         | Yes                      | Yes                     | Read                       |
+| View number of likes on posts        | Yes                      | Yes                     | Read                       |
+| View comments on posts         | Yes                      | Yes                     | Read                       |
+| View average rating on posts         | Yes                      | Yes                     | Read                       |
+|  Contact/Send Inquiry          | Yes                      | Yes                     | Create                       |
+| Search          | Yes                       | Yes                     | Read  |
+| View Post detail          | Yes                       | Yes                     | Read  |
+
+## User Interface and Page Overview
+
+### Homepage
+The homepage serves as the central hub of the website, offering a comprehensive overview of key features and latest updates. It includes prominent sections such as featured articles, direct links to major categories, and highlights of popular posts.
+
+![Homepage image](static/documentation/homepage.png)
+
+### User Registration
+The user registration feature allows new users to create an account on the website by providing necessary details like a username, email, and password. Once registered, users can log in and access additional features like posting, commenting, and interacting with content.
+
+![Signup image](static/documentation/signup1.png)
+
+###  Login and Logout
+Users can securely log in to their accounts using their credentials (username or email and password). Once authenticated, users gain access to personalized features like adding posts and managing their profile. A logout option is available to safely end the session.
+
+![Login image](static/documentation/login.png)
+
+**Logout**
+
+![Logout image](static/documentation//logout.png)
+
+### User Dashboard
+The user dashboard is a personalized section where users can view and manage their activities such as posts, comments, bookmarks, and interactions. It typically displays user-specific data and offers controls for managing posts, profile settings, and other preferences.
+
+![User Dashboard image](static/documentation/dashboard1.png)
+
+### Add Post
+Registered users can add new posts via an intuitive form. The form includes fields for the post title, content (integrated with the Quill rich text editor), categories, tags, and an option to upload images. Posts can either be published directly or submitted for approval.
+
+![Add post image](static/documentation/addpost.png)
+
+### Post Details
+Each post has a dedicated details page, displaying the full content, author information, categories, tags, and any comments associated with the post. Users can interact with the post by liking, bookmarking, or commenting on it.
+
+![Post Details image](static/documentation/openpost.png)
+
+### Search Functionality
+Users can search for posts using keywords, titles, or categories. The search feature dynamically filters through the content and displays relevant results based on the query.
+
+![Search image](static/documentation/search.png)
+
+![Search results image](static/documentation/search_results.png)
+
+### Comment and Interactions
+Users can comment on posts and reply to other users' comments, fostering discussions. The interaction options also include liking posts and comments, and bookmarking posts for later reference.
+
+![Comment and Interactions image](static/documentation/comment.png)
+
+### Categories
+Posts are organized into different categories to help users filter and browse content more efficiently. Users can view posts based on the category they select from the navigation bar or post listings.
+
+![Categories image](static/documentation/categories.png)
+
+### My Bookmarks
+Users can save posts to their bookmarks, allowing them to revisit these posts later. The "My Bookmarks" section in the user dashboard lists all bookmarked posts for easy access.
+
+![My Categories image](static/documentation/mybookmarks.png)
+
+### My Likes
+The "My Likes" section in the user dashboard allows users to keep track of all the posts they've liked. It serves as a quick reference to the user's liked content.
+
+![My Likes image](static/documentation/mylikes.png)
+
+### My Comments
+Users can view and manage all their comments in one place through the "My Comments" section in the dashboard. This allows them to quickly navigate to posts they have commented on.
+
+![My Comments image](static/documentation/mycomments.png)
+
+### My Posts
+The "My Posts" section in the dashboard displays all the posts created by the user, including those that are published, under review, or drafts. Users can manage or edit these posts from here.
+
+![My Posts image](static/documentation/myposts.png)
+
+### Pagination
+The pagination feature ensures that posts or comments are divided into pages for easy navigation. Instead of loading all content at once, users can browse through posts in a paginated manner.
+
+![Pagination image](static/documentation/pagination.png)
+
+### Footer
+The footer section typically includes useful links such as contact information, social media links, privacy policy, and terms of service. It also may display brief information about the website.
+
+![Footer image](static/documentation/footer.png)
+
+### Admin Panel
+The admin panel allows site administrators to manage content, users, comments, categories, and other settings. The admin can approve or reject posts, moderate comments, and control user activity.
+
+![Admin Pane image](static/documentation/adminpanel.png)
+
+### Contact & About us
+These static pages provide users with information about the website, the team, and how to get in touch. The "Contact" page may include a form for sending messages, while the "About" page details the purpose of the site and its mission.
+
+![Contact & About us image](static/documentation/aboutus.png)
+
 
