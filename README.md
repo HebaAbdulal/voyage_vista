@@ -194,3 +194,42 @@ Voyage Vista employs a well-selected combination of fonts to ensure readability 
     - Lato: Used for headings, navigation items, and call-to-action buttons, adding emphasis and improving visual hierarchy.
 By integrating these fonts, Voyage Vista achieves a harmonious design that enhances the user experience through clear, readable text and a visually appealing layout.
 
+# Project planning
+
+## Strategy Plane
+The strategy plane involves defining the high-level goals and objectives of the project. It includes understanding user needs, business requirements, and project constraints to create a roadmap that guides development. For VoyageVista, this means ensuring that our blog platform meets user expectations for usability, functionality, and design while aligning with business goals.
+
+### Agile Methodologies - Project Management
+
+  Story Points Allocation Story points are used to estimate the effort required to complete user stories or tasks. Each story point represents a unit of work or complexity, helping the team understand the relative effort needed. In VoyageVista, this means assigning points to tasks like developing new features, fixing bugs, or making design changes.
+  - Sprint Planning Example:
+
+    Here is an example of how story points are managed and allocated across different categories in sprints:
+    - Total Story Points for the Sprint: 128
+    - Must-have Points: 81 (63.3% of the total)
+    - Should-have Points: 28 (21.9% of the total)
+    - Could-have Points: 19 (14.8% of the total)
+
+    - Example Milestones:
+    - Milestone 1: User Engagement
+  - Total Story Points: 46
+  - Breakdown:
+    - Must-have: 21 points
+    - Should-have: 8 points
+    - Could-have: 17 points
+    - Milestone 2: Content Discovery
+  - Total Story Points: 35
+  - Breakdown:
+    - Must-have: 22 points
+    - Should-have: 13 points
+
+### MoSCoW Prioritization
+
+MoSCoW is a prioritization technique used to classify requirements into categories:
+
+- **Must Have:** Essential features that are critical for the project's success.
+- **Should Have:** Important but not crucial; they add significant value.
+- **Could Have:** Desirable features that are not critical and can be included if time permits.
+- **Won't Have:** Features that are not necessary for the current project phase.
+For VoyageVista, "Must Have" might include user authentication and post creation, while "Could Have" could include advanced search filters, dashboard and sorting options.
+
