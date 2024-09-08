@@ -386,4 +386,82 @@ The Structural Plane defines how the website is organized and navigated, focusin
         - My Comments: List of comments made by the user.
         - My Likes: List of posts liked by the user.
 
+## Framework & Aesthetic Layout
+  ### Wireframes
+  #### Home Page Wireframe
+    <details>
+    <summary>Click to View Home Page wireframe</summary>
+
+    ![Homepage Wireframe](static/wireframes/home.png)
+    </details>
+
+  #### Post detail wireframes
+    <details>
+    <summary>Click to view Post detail wireframes</summary>
+
+    **Without logging in or signing up**
+
+    ![Post detail wirefram](static/wireframes/post_detail.png)
+    
+    **Authenticated user**
+
+    ![Post detail wirefram](static/wireframes/post_detail1.png)
+    </details>
+
+  #### Sign up wireframe
+  <details>
+  <summary>Click to view Sign up Form wireframe</summary>
+
+  ![Sign up from wireframe](static/wireframes/signup.png)
+  </details>
+
+  #### Log in wireframe
+  <details>
+  <summary>Click to view Log in Forem wirefram</summary>
+
+  ![Log in wirefram](static/wireframes/login.png)
+  </details>
+
+  #### Add post wireframe
+  <details>
+  <summary>Click to view Add post Form wirefram</summary>
+
+  ![Add post wirefram](static/wireframes/add_post.png)
+  </details>
+
+  #### My Posts wireframe
+  <details>
+  <summary>Click to view My Posts wireframe</summary>
+
+  ![My Posts wireframe](static/wireframes/myposts.png)
+  </details>
+
+  #### My Likes wireframe
+  <details>
+  <summary>Click to view My Likes wireframe</summary>
+
+  ![My Likes wireframe](static/wireframes/mylikes.png)
+  </details>
+
+  #### My Comments wireframe
+  <details>
+  <summary>Click to view My Comments wireframe</summary>
+
+  ![My Comments wireframe](static/wireframes/mycomments.png)
+  </details>
+
+  #### My Bookmarks wireframe
+  <details>
+  <summary>Click to view My Bookmarks wireframe</summary>
+
+  ![My Bookmarks wireframe](static/wireframes/mybookmarks.png)
+  </details>
+
+  #### Sign Out wireframe
+  <details>
+  <summary>Click to view Sign out Form wireframe</summary>
+
+  ![Sign out wireframe](static/wireframes/signout.png)
+  </details>
+
 
