@@ -123,6 +123,14 @@ body {
     color: #fff;
 }
 
+.red-color {
+    color:#E84610;
+}
+
+.black {
+    color: black;
+}
+
 .btn-signup:hover,
 .btn-signup:active {
     background-color: #fff;
@@ -153,8 +161,26 @@ body {
     border: none;
 }
 
+.libre-baskerville-regular-italic {
+    font-family: "Libre Baskerville", serif;
+    font-weight: 400;
+    font-style: italic;
+}
+
+.margin {
+    margin-top: 20px;
+}
+
+.margin-bottom {
+    margin-bottom: 10px;
+}
+  
 .btn-custom {
     color: #21a1a1;
+}
+
+#id_password_helptext {
+    display: none;
 }
 
 .edit-form {
@@ -214,7 +240,7 @@ color: #21a1a1;
 }
 
 .success-message {
-color: green;
+color: #008000;
 font-weight: bold;
 }
 
