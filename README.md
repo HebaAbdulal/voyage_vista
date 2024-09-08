@@ -667,4 +667,46 @@ These static pages provide users with information about the website, the team, a
 - **Third-Party Authentication**
   - OAuth Integration: Implement third-party authentication providers such as Google, Facebook, or GitHub, allowing users to register and log in using existing accounts.
 
+  # Technology Used
+
+## Frontend
+  - HTML5: Used for structuring the content on the web pages.
+  - CSS3: Provides the styles and layout of the application, ensuring a responsive design.
+  - JavaScript: Used for interactive elements and client-side validation.
+  - Bootstrap: A CSS framework used for responsive design and pre-built components like forms, buttons, and pagination.
+  - Jinja/Django Templating Engine: Used to dynamically generate HTML content with data passed from the backend.
+## Backend
+  - Python: The core programming language used to build the backend logic of the application.
+  - Django: A high-level Python web framework that handles the server-side logic, URL routing, and ORM (Object-Relational Mapping) for database interaction.
+  - Django ORM: Used to interact with the database, managing queries, and models in a Pythonic way.
+  - PostgreSQL: PostgreSQL has been used in production for better performance.
+## Libraries and Frameworks
+  - Django Framework
+    - Django (Django==5.0.6): The core web framework you're using to build your project. It provides features like ORM, URL routing, templates, and forms.
+  - Database Management
+    - dj-database-url (dj-database-url==0.5.0): Simplifies configuring the database URL for your project, especially useful in deployment environments like Heroku.
+    - psycopg2 and psycopg2-binary (psycopg2==2.9.9 & psycopg2-binary==2.9.9): PostgreSQL adapters that allow Django to interact with a PostgreSQL database.
+  - Cloudinary Integration
+    - cloudinary (cloudinary==1.40.0): A library for integrating with Cloudinary, a cloud-based image and video management platform.
+    - django-cloudinary-storage (django-cloudinary-storage==0.3.0): Facilitates using Cloudinary for media file storage in Django projects.
+    - dj3-cloudinary-storage (dj3-cloudinary-storage==0.0.6): Another Cloudinary storage plugin for handling media uploads and storage with Django 3+.
+  - Form Handling & Styling
+    - django-crispy-forms (django-crispy-forms==2.1): A Django package to create and style forms with ease. It provides advanced layout and styling capabilities.
+    - crispy-bootstrap4 (crispy-bootstrap4==2024.1): Adds support for rendering forms using the Bootstrap 4 CSS framework, ensuring consistent and responsive form designs.
+  - Authentication
+    - django-allauth (django-allauth==0.63.3): A comprehensive authentication package for Django that supports user registration, login, social account integration, email verification, and more.
+  - Media Management
+      - django-summernote (django-summernote==0.8.20.0): Integrates the Summernote WYSIWYG editor with Django, allowing users to create and edit rich-text content (HTML) in forms.
+  - CORS Headers
+    - django-cors-headers (django-cors-headers==4.3.1): A Django application for handling Cross-Origin Resource Sharing (CORS), enabling your API or frontend to communicate with the backend across different origins.
+  - ASGI Support
+    - asgiref (asgiref==3.8.1): Provides asynchronous server gateway interface (ASGI) support, allowing Django to run with async-capable web servers. It's a part of Django's stack for supporting real-time applications.
+  - Production Web Server
+    - gunicorn (gunicorn==22.0.0): A Python WSGI HTTP server commonly used to deploy Django applications in production environments.
+  - Timezone and SQL Parsing Utilities
+    - pytz (pytz==2024.1): A library for accurate and cross-platform timezone handling in Python.
+    - sqlparse (sqlparse==0.5.0): A tool used for parsing SQL queries, which is integrated into Django for database query parsing.
+  - Django Pagination: Handles the pagination logic, allowing comments to be split across multiple pages.
+  - JQuery: Provides additional interactivity on the frontend, particularly for handling AJAX requests, form submission, and comment edit actions.
+
 
