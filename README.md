@@ -308,3 +308,39 @@ Epics are large bodies of work that can be broken down into smaller, more manage
     - Approve Comments.
     - Create drafts.
 
+# Scope Plane
+
+In project management and design, the Scope Plane defines the boundaries and deliverables of a project. It is essential for ensuring that all project stakeholders have a clear understanding of what is included and excluded from the project's scope. Here's an overview of the Scope Plane in the context of your project:
+
+- Project Boundaries
+In-Scope: Defines what functionalities, features, and elements are included in the project. For instance, in your project, this includes user authentication, content management, rating systems, and user engagement features.
+Out-of-Scope: Clarifies what is not included in the project. For example, advanced content filtering and interactive maps integration are noted as future considerations or not part of the current project scope.
+- Deliverables
+Functional Requirements: Detailed specifications of what the system should do. These include user stories like rating posts, browsing categories, and viewing ratings.
+Non-Functional Requirements: Aspects like performance, security, and usability that the project must meet. This includes responsiveness, data protection, and a seamless user experience.
+- Project Objectives
+Primary Objectives: Achieve core functionalities such as user registration, content creation, and interaction with posts (e.g., commenting, liking).
+Secondary Objectives: Enhancements and additional features that improve the user experience, like custom branding and backup solutions.
+
+- Stakeholder Expectations
+User Stories: Capture the needs and expectations of users, ensuring that the project deliverables meet these requirements.
+Acceptance Criteria: Define how the success of the deliverables will be measured, ensuring that each feature meets the defined user needs.
+- Scope Management
+Scope Control: Procedures to manage changes and ensure that the project remains within the defined scope. This includes handling requests for additional features or modifications.
+Scope Verification: Regular reviews and validation to confirm that project deliverables align with the agreed-upon scope.
+
+- Exempel from Voyage Vista Project:
+    - In-Scope:
+
+      - User registration and authentication
+      - Rating and commenting on posts
+      - Bookmarking and saving posts
+      - Browsing and discovering posts by categories
+    - Out-of-Scope:
+
+      - Advanced content filtering
+      - Interactive maps integration
+
+The Scope Plane ensures that all project aspects are well-defined and understood, helping to avoid scope creep and ensuring that the project delivers what is expected within the agreed-upon constraints.
+
+
