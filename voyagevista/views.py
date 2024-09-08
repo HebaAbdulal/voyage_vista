@@ -22,6 +22,7 @@ from django.core.mail import send_mail
 from django.views.generic.edit import FormView
 from django.conf import settings
 from django.core.mail import EmailMessage
+from django.views.generic.edit import CreateView
 
 
 def category_view(request, category_slug=None):
@@ -73,17 +74,26 @@ class PostDetailView(View):
         selected_post.save()
 
         approved_comments = selected_post.comments.filter(approved=True)
+
+        # Pagination
+        paginator = Paginator(approved_comments, 5)  # Show 5 comments per page
+        page_number = request.GET.get('page')
+        comments_page = paginator.get_page(page_number)
+
+        # Update the comments_with_info based on paginated comments
+        comments_with_info = [{"mycomment": comment, "is_owner": comment.author == request.user} for comment in comments_page]
+
+        # Fetch pending comments
         pending_comments = selected_post.comments.filter(approved=False, author=request.user) if request.user.is_authenticated else []
 
         user_rating = selected_post.ratings.filter(user=request.user).first() if request.user.is_authenticated else None
         is_bookmarked = selected_post.saves.filter(id=request.user.id).exists() if request.user.is_authenticated else False
         is_liked = selected_post.likes.filter(id=request.user.id).exists() if request.user.is_authenticated else False
 
-        comments_with_info = [{"mycomment": comment, "is_owner": comment.author == request.user} for comment in approved_comments]
-
         return render(request, 'post_detail.html', {
             'post': selected_post,
-            'comments': comments_with_info,
+            'comments': comments_page,
+            'comments_with_info': comments_with_info,
             'awaiting_comments': pending_comments,
             'comment_form': CommentForm(),
             'rating_form': RatingForm(instance=user_rating),
@@ -264,8 +274,10 @@ class PostLike(View):
         selected_post = get_object_or_404(Post, slug=slug)
         if selected_post.likes.filter(id=request.user.id).exists():
             selected_post.likes.remove(request.user)
+            messages.info(request, "You have unliked the post.")
         else:
             selected_post.likes.add(request.user)
+            messages.success(request, "You have liked the post.")
         return HttpResponseRedirect(reverse("post_detail", args=[slug]))
 
 
@@ -412,7 +424,7 @@ class MyPostsView(LoginRequiredMixin, TemplateView):
 
         return context
 
-        
+
 class AddPostView(LoginRequiredMixin, CreateView):
     """
     View to handle the creation of new posts by authenticated users.
@@ -427,12 +439,14 @@ class AddPostView(LoginRequiredMixin, CreateView):
         Set the post author and status, then save the post.
         """
         form.instance.author = self.request.user
-        form.instance.status = 0
+        form.instance.status = 0  # Set post as 'awaiting approval'
+        
         response = super().form_valid(form)
         messages.success(self.request, 'Your post is awaiting approval.')
-        return redirect(self.success_url)
+        return response
 
 
+@method_decorator(login_required, name='dispatch')
 class RatePostView(View):
     def post(self, request, post_slug):
         if not request.user.is_authenticated:
@@ -456,7 +470,12 @@ class RatePostView(View):
             post.average_rating = average_rating
             post.save()
 
-            return JsonResponse({'success': True, 'average_rating': average_rating})
+            # Include the success message in the JSON response
+            return JsonResponse({
+                'success': True, 
+                'average_rating': average_rating, 
+                'message': "You have rated the post successfully!"
+            })
 
         except json.JSONDecodeError:
             return JsonResponse({'success': False, 'error': 'Invalid JSON.'}, status=400)
