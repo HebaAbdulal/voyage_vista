@@ -1,13 +1,19 @@
+
+
 {% load static %}
 {% load crispy_forms_tags %}
 
-{% url 'home' as home_url %}
-
-<!DOCTYPE html>
-<html class="h-100">
+<html lang="en" class="h-100">
 
 <head>
-    <title>Voyage Vista</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="VoyageVista is a dynamic tourism blog platform where users can create, interact with, and explore travel-related content. Authenticated users can add posts, leave comments, like, bookmark, and rate content. Admins review and approve posts and comments to ensure high-quality content. With features like pagination and user-specific content management, VoyageVista offers an engaging experience for both users and administrators.">
+    <meta name="keywords" content="tourism blog, travel posts, user-generated content, travel comments, post rating, travel bookmarks, Django tourism platform, interactive travel blog, travel reviews, user interaction, admin approval, VoyageVista">
+    
+    <title>{% block title %}Voyage Vista{% endblock %}</title>
+    
     <!-- Favicon -->
     <link rel="apple-touch-icon" sizes="180x180" href="{% static 'images/favicon/apple-touch-icon.png' %}">
     <link rel="icon" type="image/png" sizes="192x192" href="{% static 'images/favicon/android-chrome-192x192.png' %}">
@@ -15,70 +21,61 @@
     <link rel="icon" type="image/png" sizes="32x32" href="{% static 'images/favicon/favicon-32x32.png' %}">
     <link rel="icon" type="image/png" sizes="16x16" href="{% static 'images/favicon/favicon-16x16.png' %}">
     <link rel="manifest" href="{% static 'images/favicon/site.webmanifest' %}">
-
+    
     <!-- Preconnect and Fonts -->
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-
-    <!-- Meta Tags -->
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-
+    
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
-
+    
     <!-- Bootstrap Bundle JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4" crossorigin="anonymous">
     </script>
 
-    
-
     <style>
         .navbar-custom {
-            background-color: #23bbbb;
+            background-color: #267b7b;
         }
-
         .navbar-custom .navbar-nav .nav-link {
             color: white;
         }
-
         .btn-custom {
             background-color: #21a1a1;
             color: white;
         }
-
         .footer-custom {
-            background-color: #1fa3a3;
+            background-color: #267b7b;
         }
-
         /* Adjust dropdown styling */
         .dropdown-menu {
-            background-color: #23bbbb; /* Background color */
-            border: none; /* No border */
+            background-color: #23bbbb;
+            border: none;
         }
-
         .dropdown-menu a {
-            color: white !important; /* Text color */
+            color: white !important;
         }
-
         .dropdown-menu a:hover {
-            background-color: #1fa3a3 !important; /* Hover background color */
+            background-color: #1fa3a3 !important;
         }
-
         .dropdown-menu .dropdown-divider {
-            border-top: 1px solid #1fa3a3; /* Divider color */
+            border-top: 1px solid #1fa3a3;
         }
-
         .dropdown-menu .dropdown-item {
-            padding: 0.5rem 1rem; /* Adjust padding */
+            padding: 0.5rem 1rem;
         }
-
         .navbar-toggler-icon {
             background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='rgba%281, 1, 1, 1%29' stroke-width='2' linecap='round' linejoin='round' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
+        }
+
+        .dropdown-divider {
+            border-top: 1px solid #e9ecef;
+            margin: 0.5rem 0;
         }
     </style>
 </head>
@@ -119,28 +116,27 @@
                     </li>
                     {% if user.is_authenticated %}
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="profileDropdown" role="button"
+                        <a class="nav-link dropdown-toggle" href="javascript:void(0)" id="profileDropdownAuth" role="button"
                             data-bs-toggle="dropdown" aria-expanded="false">
                             {{ user.username }}
                         </a>
-                        <ul class="dropdown-menu" aria-labelledby="profileDropdown">
+                        <ul class="dropdown-menu" aria-labelledby="profileDropdownAuth">
                             <li><a class="dropdown-item" href="{% url 'add_post' %}">Add Post</a></li>
                             <li><a class="dropdown-item" href="{% url 'my_likes' %}">My Likes</a></li>
                             <li><a class="dropdown-item" href="{% url 'my_comments' %}">My Comments</a></li>
                             <li><a class="dropdown-item" href="{% url 'my_bookmarks' %}">My Bookmarks</a></li>
                             <li><a class="dropdown-item" href="{% url 'my_posts' %}">My Posts</a></li>
-                            <hr class="dropdown-divider">
-                            </li>
+                            <li class="dropdown-divider"></li>
                             <li><a class="dropdown-item" href="{% url 'account_logout' %}">Logout</a></li>
                         </ul>
-                    </li>
+                    </li>                    
                     {% else %}
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="profileDropdown" role="button"
+                        <a class="nav-link dropdown-toggle" href="javascript:void(0)" id="profileDropdownGuest" role="button"
                             data-bs-toggle="dropdown" aria-expanded="false">
                             Profile
                         </a>
-                        <ul class="dropdown-menu" aria-labelledby="profileDropdown">
+                        <ul class="dropdown-menu" aria-labelledby="profileDropdownGuest">
                             <li><a class="dropdown-item" href="{% url 'account_login' %}">Login</a></li>
                             <li><a class="dropdown-item" href="{% url 'account_signup' %}">Register</a></li>
                         </ul>
@@ -174,7 +170,7 @@
     <main class="flex-shrink-0 main-bg">
         {% block content %}
         <!-- Content Goes here -->
-        {% endblock content %}
+        {% endblock %}
     </main>
 
     <!-- Footer -->
@@ -182,10 +178,10 @@
         <div class="container text-center">
             <p class="m-0">Made by Voyage Vista Team</p>
             <p class="m-0">Follow us:
-                <a href="https://www.facebook.com" class="text-light ms-3"><i class="fab fa-facebook-square"></i></a>
-                <a href="https://www.twitter.com" class="text-light ms-3"><i class="fab fa-twitter-square"></i></a>
-                <a href="https://www.instagram.com" class="text-light ms-3"><i class="fab fa-instagram-square"></i></a>
-                <a href="https://www.youtube.com" class="text-light ms-3"><i class="fab fa-youtube-square"></i></a>
+                <a href="https://www.facebook.com" class="text-light ms-3">Facebook<i class="fab fa-facebook-square"></i></a>
+                <a href="https://www.twitter.com" class="text-light ms-3">Twitter<i class="fab fa-twitter-square"></i></a>
+                <a href="https://www.instagram.com" class="text-light ms-3">Instagram<i class="fab fa-instagram-square"></i></a>
+                <a href="https://www.youtube.com" class="text-light ms-3">Youtube<i class="fab fa-youtube-square"></i></a>
             </p>
         </div>
     </footer>

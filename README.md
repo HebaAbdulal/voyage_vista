@@ -7,7 +7,7 @@
 
 Link to live website: [CLICK HERE!](https://ckz8780-django-voyagevista-app-19845c20e94f.herokuapp.com/)
 
-![Am I Responsive Image](documentation/screenshots/responsive.JPG)
+![Am I Responsive Image](static/documentation/responsive.png)
 
 # Introduction
 Voyage Vista is a dynamic blogging platform tailored for travelers, adventurers, and enthusiasts of exploration. Designed with both content creators and readers in mind, Voyage Vista offers a user-friendly experience for sharing and discovering stories, tips, and insights about travel. Built using the Django web framework, the platform facilitates a seamless interaction between users, allowing them to create, share, and engage with content on various travel-related topics.
@@ -205,18 +205,18 @@ The strategy plane involves defining the high-level goals and objectives of the 
   - Sprint Planning Example:
 
     Here is an example of how story points are managed and allocated across different categories in sprints:
-    - Total Story Points for the Sprint: 128
-    - Must-have Points: 81 (63.3% of the total)
-    - Should-have Points: 28 (21.9% of the total)
-    - Could-have Points: 19 (14.8% of the total)
+    - Total Story Points for the Sprint: 129
+    - Must-have Points: 78 (60.5% of the total)
+    - Should-have Points: 31 (24% of the total)
+    - Could-have Points: 20 (15.5% of the total)
 
     - Example Milestones:
     - Milestone 1: User Engagement
-  - Total Story Points: 46
+  - Total Story Points: 49
   - Breakdown:
     - Must-have: 21 points
     - Should-have: 8 points
-    - Could-have: 17 points
+    - Could-have: 20 points
     - Milestone 2: Content Discovery
   - Total Story Points: 35
   - Breakdown:
@@ -792,5 +792,30 @@ requirements.txt: Contains a list of the project’s dependencies. To install th
     - Follow the local setup steps mentioned above.
     - Make your changes and push them to your fork.
     - Submit a pull request from your fork to the original repository.
+
+# Credits
+
+## Code
+
+Here are some blogs and tutorials that supported my learning for this project:
+- [Django Docs](https://www.djangoproject.com/)
+- [Bootstrap Docs](https://getbootstrap.com/docs/5.3/getting-started/introduction/)
+- [Very Academy](<https://www.youtube.com/watch?v=H4QPHLmsZMU>)
+- [Dee Mc](https://www.youtube.com/watch?v=sBjbty691eI&list=PLXuTq6OsqZjbCSfiLNb2f1FOs8viArjWy) for Django
+
+## Media
+
+The following website weas used to gather the photographic media used:
+- [Pexels](https://www.pexels.com/)
+
+## Acknowledgments
+I want to thank my husband for his endless support and patience throughout this project.
+
+My mentor Matt Bodden for the valuable guidance and feedback that made this project possible.
+
+David Bowers who led the final session for the crucial help in the project's final stages.
+
+Your support has been greatly appreciated.
+
 
 

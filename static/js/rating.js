@@ -1,11 +1,11 @@
 $(document).ready(function() {
     // Function to get the CSRF token from the cookie
     function getCookie(name) {
-        let cookieValue = null;
+        var cookieValue = null;
         if (document.cookie && document.cookie !== '') {
-            const cookies = document.cookie.split(';');
-            for (let i = 0; i < cookies.length; i++) {
-                const cookie = cookies[i].trim();
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = cookies[i].trim();
                 if (cookie.substring(0, name.length + 1) === (name + '=')) {
                     cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
                     break;
@@ -15,7 +15,7 @@ $(document).ready(function() {
         return cookieValue;
     }
 
-    const csrftoken = getCookie('csrftoken');
+    var csrftoken = getCookie('csrftoken');
 
     // Ensure postSlug and userRating are logged
     console.log('Post Slug:', postSlug);
@@ -23,11 +23,11 @@ $(document).ready(function() {
 
     // Star rating handling
     $('.star').on('click', function() {
-        const rating = $(this).data('value');
+        var rating = $(this).data('value');
 
         $.ajax({
             type: 'POST',
-            url: `/rate-post/${postSlug}/`, // Correctly use the postSlug variable here
+            url: '/rate-post/' + postSlug + '/', // Correctly use the postSlug variable here
             headers: { 'X-CSRFToken': csrftoken }, // Use the CSRF token from the cookie
             data: JSON.stringify({ rating: rating }),
             contentType: 'application/json',
@@ -59,7 +59,7 @@ $(document).ready(function() {
     // Hover effect for stars
     $('.star').hover(
         function() {
-            const rating = $(this).data('value');
+            var rating = $(this).data('value');
             updateStars(rating);
         }, function() {
             updateStars(userRating); // Restore user's rating on hover out

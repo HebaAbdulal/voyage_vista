@@ -48,7 +48,7 @@ def category_view(request, category_slug=None):
     }
 
     return render(request, 'index.html', context)
-    
+
 
 class HomeView(generic.ListView):
     """
@@ -61,12 +61,16 @@ class HomeView(generic.ListView):
 
 class PostDetailView(View):
     """
-    Handles the display of a single post's details, including comments, ratings, likes, and bookmarks.
-    Supports editing and deleting comments, submitting ratings, and adding new comments.
+    Handles the display of a single post's details,
+    including comments, ratings, likes, and bookmarks.
+    Supports editing and deleting comments,
+    submitting ratings, and adding new comments.
     """
     def get(self, request, slug):
         """
-        Display the post detail page, increment the view count, and retrieve user-specific data like 
+        Display the post detail page,
+        increment the view count,
+        and retrieve user-specific data like
         comments, ratings, likes, and bookmarks.
         """
         selected_post = get_object_or_404(Post, slug=slug)
@@ -80,15 +84,40 @@ class PostDetailView(View):
         page_number = request.GET.get('page')
         comments_page = paginator.get_page(page_number)
 
-        # Update the comments_with_info based on paginated comments
-        comments_with_info = [{"mycomment": comment, "is_owner": comment.author == request.user} for comment in comments_page]
+        # Update the comments_with_info
+        comments_with_info = [
+            {
+                "mycomment": comment,
+                "is_owner": comment.author == request.user
+            }
+            for comment in comments_page
+        ]
 
         # Fetch pending comments
-        pending_comments = selected_post.comments.filter(approved=False, author=request.user) if request.user.is_authenticated else []
+        if request.user.is_authenticated:
+            pending_comments = selected_post.comments.filter(
+                approved=False, author=request.user
+            )
+        else:
+            pending_comments = []
 
-        user_rating = selected_post.ratings.filter(user=request.user).first() if request.user.is_authenticated else None
-        is_bookmarked = selected_post.saves.filter(id=request.user.id).exists() if request.user.is_authenticated else False
-        is_liked = selected_post.likes.filter(id=request.user.id).exists() if request.user.is_authenticated else False
+        if request.user.is_authenticated:
+            user_rating = (
+                selected_post.ratings.filter(user=request.user).first()
+            )
+        else:
+            user_rating = None
+
+        is_bookmarked = (
+            selected_post.saves.filter(id=request.user.id).exists()
+            if request.user.is_authenticated
+            else False
+        )
+        is_liked = (
+            selected_post.likes.filter(id=request.user.id).exists()
+            if request.user.is_authenticated
+            else False
+        )
 
         return render(request, 'post_detail.html', {
             'post': selected_post,
@@ -104,20 +133,29 @@ class PostDetailView(View):
 
     def post(self, request, slug):
         """
-        Handle post-related actions such as editing/deleting comments, submitting ratings, and adding new comments.
+        Handle post-related actions such as editing/deleting comments,
+        submitting ratings, and adding new comments.
         """
         selected_post = get_object_or_404(Post, slug=slug)
-        approved_comments = selected_post.comments.filter(approved=True).order_by("-created_on")
+        approved_comments = selected_post.comments.filter(
+            approved=True
+        ).order_by("-created_on")
 
         if 'edit_comment' in request.POST:
             comment_id = request.POST.get('comment_id')
             selected_comment = get_object_or_404(Comment, id=comment_id)
-            comment_form_instance = CommentForm(request.POST, instance=selected_comment)
+            comment_form_instance = CommentForm(
+                request.POST, instance=selected_comment)
+
             if comment_form_instance.is_valid():
                 edited_comment = comment_form_instance.save(commit=False)
                 edited_comment.approved = False
                 edited_comment.save()
-                messages.success(request, 'Comment updated successfully and is now awaiting approval.')
+                messages.success(
+                    request, 'Comment updated and awaiting approval.'
+
+                )
+
             else:
                 messages.error(request, 'Error updating comment.')
 
@@ -126,20 +164,30 @@ class PostDetailView(View):
             selected_comment = get_object_or_404(Comment, id=comment_id)
             selected_comment.delete()
             messages.success(request, 'Comment deleted successfully.')
-        
+
         elif 'submit_rating' in request.POST:
             rating_form_instance = RatingForm(request.POST)
             if rating_form_instance.is_valid():
                 rating, created = Rating.objects.update_or_create(
                     user=request.user,
                     post=selected_post,
-                    defaults={'rating': rating_form_instance.cleaned_data['rating']},
+                    defaults={
+                        'rating': rating_form_instance.cleaned_data['rating']
+                        }
                 )
                 messages.success(request, 'Rating submitted successfully.')
-                return JsonResponse({'success': True, 'message': 'Rating submitted successfully'})
+                return JsonResponse({
+                    'success': True,
+                    'message': 'Rating submitted successfully'
+                })
+
             else:
                 messages.error(request, 'Error submitting rating.')
-                return JsonResponse({'success': False, 'error': 'Error submitting rating'})
+                return JsonResponse({
+                    'success': False,
+                    'error': 'Error submitting rating'
+
+                })
 
         else:
             comment_form_instance = CommentForm(request.POST)
@@ -148,10 +196,16 @@ class PostDetailView(View):
                 comment.author = request.user
                 comment.post = selected_post
                 comment.save()
-                messages.success(request, 'Your comment has been submitted for approval.')
-                return HttpResponseRedirect(reverse('post_detail', args=[slug]))
+                messages.success(
+                    request, 'Your comment has been submitted for approval.'
+                    )
+                return HttpResponseRedirect(
+                    reverse('post_detail', args=[slug])
+                    )
 
-        comments_with_info = [{"mycomment": comment, "is_owner": comment.author == request.user} for comment in approved_comments]
+        comments_with_info = [
+            {"mycomment": comment, "is_owner": comment.author == request.user}
+            for comment in approved_comments]
         is_liked = selected_post.likes.filter(id=request.user.id).exists()
         is_bookmarked = selected_post.saves.filter(id=request.user.id).exists()
 
@@ -162,8 +216,17 @@ class PostDetailView(View):
             'liked': is_liked,
             'is_post_user': request.user == selected_post.author,
             'is_bookmarked': is_bookmarked,
-            'rating_form': RatingForm(instance=selected_post.ratings.filter(user=request.user).first()),
-            'commented': request.user.is_authenticated and selected_post.comments.filter(author=request.user).exists(),
+            'rating_form': RatingForm(
+                instance=selected_post.ratings.filter(
+                    user=request.user
+                ).first()
+            ),
+
+            'commented': (
+                request.user.is_authenticated and
+                selected_post.comments.filter(author=request.user).exists()
+            )
+
         })
 
 
@@ -188,12 +251,18 @@ class PostBookmark(View):
 class CommentEdit(View):
     def get(self, request, slug=None, pk=None, *args, **kwargs):
         """
-        Render the edit comment form if the user is authorized to edit the comment.
+        Render the edit comment form
+        if the user is authorized to edit the comment.
         """
         selected_post = get_object_or_404(Post, slug=slug, status=1)
-        selected_comment = get_object_or_404(Comment, pk=pk, post=selected_post)
+        selected_comment = get_object_or_404(
+            Comment, pk=pk, post=selected_post
+        )
+
         if request.user.id != selected_comment.author.id:
-            messages.error(request, 'You do not have permission to edit this comment.')
+            messages.error(
+                request, 'You do not have permission to edit this comment.'
+                )
             return redirect('post_detail', slug=slug)
 
         # Include the comment form in the context
@@ -201,31 +270,43 @@ class CommentEdit(View):
             "status_message": "",
             "post": selected_post,
             "comment_form": CommentForm(instance=selected_comment),
-            "awaiting_comments": Comment.objects.filter(post=selected_post, approved=False),
-            "comments": Comment.objects.filter(post=selected_post, approved=True),
+            "awaiting_comments": Comment.objects.filter(
+                post=selected_post, approved=False),
+            "comments": Comment.objects.filter(
+                post=selected_post, approved=True),
             "commented": False
         }
         return render(request, "post_detail.html", context)
 
     def post(self, request, slug=None, pk=None, *args, **kwargs):
         """
-        Process the edit comment form submission and update the comment if valid.
+        Process the edit comment form submission
+        and update the comment if valid.
         """
-        selected_post = get_object_or_404(Post, slug=slug, status=1)
-        selected_comment = get_object_or_404(Comment, pk=pk, post=selected_post)
+        selected_post = get_object_or_404(
+            Post, slug=slug, status=1)
+        selected_comment = get_object_or_404(
+            Comment, pk=pk, post=selected_post)
         if request.user.id != selected_comment.author.id:
-            return JsonResponse({'success': False, 'error': 'You do not have permission to edit this comment.'})
+            return JsonResponse({
+                'success': False,
+                'error': 'You do not have permission to edit this comment.'
+            })
 
-        comment_form_instance = CommentForm(data=request.POST, instance=selected_comment)
+        comment_form_instance = CommentForm(
+                data=request.POST, instance=selected_comment)
         if comment_form_instance.is_valid():
             edited_comment = comment_form_instance.save(commit=False)
-            edited_comment.approved = False  # Set the comment to awaiting approval
+            edited_comment.approved = False
             edited_comment.save()
-            return JsonResponse({'success': True, 'message': 'Comment updated successfully and is now awaiting approval.'})
+            return JsonResponse({
+                'success': True,
+                'message': 'Comment updated and is now awaiting approval.'
+            })
         else:
             return JsonResponse({'success': False, 'error': 'Invalid input.'})
 
-        
+
 @method_decorator(login_required, name='dispatch')
 class CommentDeleteView(View):
     """
@@ -241,7 +322,9 @@ class CommentDeleteView(View):
 
         # Check if the current user is the author of the comment
         if request.user.id != selected_comment.author.id:
-            messages.error(request, 'You do not have permission to delete this comment.')
+            messages.error(
+                request, 'You do not have permission to delete this comment.'
+                )
             return HttpResponseRedirect(reverse("post_detail", args=[slug]))
 
         # Attempt to delete the comment
@@ -254,12 +337,14 @@ class CommentDeleteView(View):
         Handle the POST request to delete a comment if the user has permission.
         """
         selected_post = get_object_or_404(Post, slug=slug, status=1)
-        selected_comment = get_object_or_404(Comment, pk=pk, post=selected_post)
-        
+        selected_comment = get_object_or_404(
+            Comment, pk=pk, post=selected_post)
+
         if request.user.id != selected_comment.author.id:
-            messages.error(request, 'You do not have permission to delete this comment.')
-            return HttpResponseRedirect(reverse("post_detail", args=[slug]))
-        
+            messages.error(
+                request, 'You do not have permission to delete this comment.')
+            return HttpResponseRedirect(reverse(
+                "post_detail", args=[slug]))
         selected_comment.delete()
         messages.success(request, "Comment Deleted Successfully")
         return redirect("post_detail", slug=slug)
@@ -292,18 +377,17 @@ class DeletePostView(View):
         Handle POST request to delete a post if the user is authorized.
         """
         selected_post = get_object_or_404(Post, slug=slug)
-        print(f"User: {request.user.id}, Post Author: {selected_post.author.id}")  # Debug print
         if request.user.id == selected_post.author.id:
             selected_post.delete()
             messages.success(request, 'Post deleted successfully.')
             print("Success message added")  # Debug print
             return redirect('home')
         else:
-            messages.error(request, 'You do not have permission to delete this post.')
+            messages.error(
+                request, 'You do not have permission to delete this post.')
             print("Error message added")  # Debug print
             return HttpResponseRedirect(reverse('post_detail', args=[slug]))
-    
-    
+
     def post(self, request, slug, *args, **kwargs):
         """
         Handle POST request to delete a post if the user is authorized.
@@ -314,7 +398,8 @@ class DeletePostView(View):
             messages.success(request, 'Post deleted successfully.')
             return redirect('home')
         else:
-            messages.error(request, 'You do not have permission to delete this post.')
+            messages.error(
+                    request, 'You do not have permission to delete this post.')
             return redirect(reverse('post_detail', args=[slug]))
 
 
@@ -331,7 +416,6 @@ class MyLikesView(LoginRequiredMixin, ListView):
     def get_queryset(self):
         return self.request.user.blog_likes.all().order_by('-created_on')
 
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         paginator = Paginator(self.get_queryset(), self.paginate_by)
@@ -344,7 +428,7 @@ class MyLikesView(LoginRequiredMixin, ListView):
 
 class MyCommentsView(LoginRequiredMixin, ListView):
     """
-    View class to display a list of posts that the current user has commented on.
+    View class to display a list of user's commented posts.
     """
     model = Comment
     template_name = 'my_comments.html'
@@ -386,7 +470,8 @@ class MyBookmarksView(LoginRequiredMixin, TemplateView):
 
 class MyPostsView(LoginRequiredMixin, TemplateView):
     """
-    View class to display a list of posts that current user has created, categorized by their approval status.
+    View class to display a list of posts that current user has created,
+    categorized by their approval status.
     """
     template_name = 'my_posts.html'
     paginate_by = 4
@@ -394,13 +479,13 @@ class MyPostsView(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         user_posts = self.request.user.blog_posts.all()
-        
+
         approved_posts = user_posts.filter(approved=True)
         pending_posts = user_posts.filter(approved=False)
 
         paginator_approved = Paginator(approved_posts, self.paginate_by)
         paginator_pending = Paginator(pending_posts, self.paginate_by)
-        
+
         page = self.request.GET.get('page')
 
         try:
@@ -408,7 +493,8 @@ class MyPostsView(LoginRequiredMixin, TemplateView):
         except PageNotAnInteger:
             approved_page = paginator_approved.page(1)
         except EmptyPage:
-            approved_page = paginator_approved.page(paginator_approved.num_pages)
+            approved_page = paginator_approved.page(
+                    paginator_approved.num_pages)
 
         try:
             pending_page = paginator_pending.page(page)
@@ -440,7 +526,7 @@ class AddPostView(LoginRequiredMixin, CreateView):
         """
         form.instance.author = self.request.user
         form.instance.status = 0  # Set post as 'awaiting approval'
-        
+
         response = super().form_valid(form)
         messages.success(self.request, 'Your post is awaiting approval.')
         return response
@@ -450,40 +536,51 @@ class AddPostView(LoginRequiredMixin, CreateView):
 class RatePostView(View):
     def post(self, request, post_slug):
         if not request.user.is_authenticated:
-            return JsonResponse({'success': False, 'error': 'User not authenticated.'}, status=401)
+            return JsonResponse({
+                'success': False,
+                'error': 'User not authenticated.'}, status=401)
 
         try:
             data = json.loads(request.body)
             rating_value = data.get('rating')
             if rating_value is None or not (1 <= rating_value <= 5):
-                return JsonResponse({'success': False, 'error': 'Invalid rating value.'}, status=400)
+                return JsonResponse({
+                    'success': False,
+                    'error': 'Invalid rating value.'}, status=400)
 
             user = request.user
             post = get_object_or_404(Post, slug=post_slug)
 
-            rating, created = Rating.objects.get_or_create(user=user, post=post, defaults={'rating': rating_value})
+            rating, created = Rating.objects.get_or_create(
+                    user=user, post=post, defaults={'rating': rating_value})
             if not created:
                 rating.rating = rating_value
                 rating.save()
 
-            average_rating = Rating.objects.filter(post=post).aggregate(Avg('rating'))['rating__avg']
+            average_rating = Rating.objects.filter(
+                post=post).aggregate(Avg('rating'))['rating__avg']
             post.average_rating = average_rating
             post.save()
 
             # Include the success message in the JSON response
             return JsonResponse({
-                'success': True, 
-                'average_rating': average_rating, 
+                'success': True,
+                'average_rating': average_rating,
                 'message': "You have rated the post successfully!"
             })
 
         except json.JSONDecodeError:
-            return JsonResponse({'success': False, 'error': 'Invalid JSON.'}, status=400)
+            return JsonResponse({
+                'success': False,
+                'error': 'Invalid JSON.'}, status=400)
         except Post.DoesNotExist:
-            return JsonResponse({'success': False, 'error': 'Post not found.'}, status=404)
+            return JsonResponse({
+                'success': False,
+                'error': 'Post not found.'}, status=404)
         except Exception as e:
-            return JsonResponse({'success': False, 'error': str(e)}, status=500)
-            
+            return JsonResponse({
+                'success': False, 'error': str(e)}, status=500)
+
 
 @method_decorator(login_required, name='dispatch')
 class EditPostView(View):
@@ -499,9 +596,12 @@ class EditPostView(View):
         post = get_object_or_404(Post, slug=slug)
         if request.user == post.author or request.user.is_superuser:
             form = PostForm(instance=post)
-            return render(request, 'edit_post.html', {'form': form, 'post': post})
+            return render(
+                request, 'edit_post.html', {
+                    'form': form, 'post': post})
         else:
-            messages.error(request, 'You do not have permission to edit this post.')
+            messages.error(
+                    request, 'You do not have permission to edit this post.')
             return redirect('post_detail', slug=slug)
 
     def post(self, request, slug):
@@ -509,27 +609,30 @@ class EditPostView(View):
         Process the edit post form submission and update the post if valid.
         """
         post = get_object_or_404(Post, slug=slug)
-        
+
         # Initialize form for both valid and invalid cases
         form = PostForm(request.POST, request.FILES, instance=post)
-        
+
         if request.user == post.author or request.user.is_superuser:
             if form.is_valid():
                 edited_post = form.save(commit=False)
                 edited_post.approved = False  # Set post to awaiting approval
                 edited_post.status = 0  # Set post status to Draft
                 edited_post.save()
-                messages.success(request, 'Post updated successfully and is now awaiting approval.')
-                return redirect(self.success_url, slug=slug)  # Redirect to the post detail view
+                messages.success(
+                        request, 'Post updated and is now awaiting approval.')
+                return redirect(
+                    self.success_url, slug=slug)
             else:
                 messages.error(request, 'Invalid input.')
         else:
-            messages.error(request, 'You do not have permission to edit this post.')
+            messages.error(
+                request, 'You do not have permission to edit this post.')
             return redirect('post_detail', slug=slug)
-        
+
         return render(request, 'edit_post.html', {'form': form, 'post': post})
-        
-        
+
+
 class SearchPostListView(ListView):
     """
     View to display a list of posts matching a search query.
@@ -570,10 +673,12 @@ class ContactView(FormView):
 
     def form_valid(self, form):
         """
-        Send an email with the contact form details and redirect to success page.
+        Send an email with the contact form details
+        and redirect to success page.
         """
         email = EmailMessage(
-            subject=f"Contact Form Submission from {form.cleaned_data['name']}",
+            subject=f"Contact Form Submission from {
+                form.cleaned_data['name']}",
             body=form.cleaned_data['message'],
             from_email='hebaabdulal24@gmail.com',
             to=['hebaabdulal24@gmail.com'],
@@ -582,10 +687,9 @@ class ContactView(FormView):
         email.send(fail_silently=False)
         return super().form_valid(form)
 
-        
+
 class ContactSuccessView(TemplateView):
     """
     View to display the contact form submission success page.
     """
     template_name = 'contact_success.html'
-    

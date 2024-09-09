@@ -1,4 +1,5 @@
-<!-- index.html -->
+<!DOCTYPE html>
+
 {% extends "base.html" %}
 {% load static %}
 
@@ -34,8 +35,8 @@
                                 <p class="card-text">{{ post.excerpt }}</p>
                             </a>
                             <hr>
-                            <p class="card-category text-muted h6">{{ post.author|upper }} | {{ post.category.name|upper }}</p>
-                            <p class="card-text text-muted h6">{{ post.created_on }}
+                            <p class="card-category h6 color">{{ post.author|upper }} | {{ post.category.name|upper }}</p>
+                            <p class="card-text h6 color">{{ post.created_on }}
                                 <i class="far fa-thumbs-up"></i> {{ post.number_of_likes }}
                                 <i class="far fa-comment"></i> {{ post.number_of_comments }}
                                 <i class="far fa-bookmark"></i> {{ post.number_of_saves }}

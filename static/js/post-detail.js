@@ -1,4 +1,8 @@
-function toggleEditForm(commentId) {
+
+
+
+// Function to toggle the visibility of the edit form
+var toggleEditForm = function(commentId) {
     var editForm = document.getElementById('edit-form-' + commentId);
     var commentActions = document.getElementById('comment-actions-' + commentId);
 
@@ -9,47 +13,55 @@ function toggleEditForm(commentId) {
         editForm.style.display = 'none';
         commentActions.style.display = 'block';
     }
-}
+};
 
-function submitEdit(commentId, postSlug) {
+// Function to submit the edited comment via AJAX
+var submitEdit = function(commentId, postSlug) {
     var editForm = document.getElementById('edit-form-' + commentId);
     var formData = new FormData(editForm);
     formData.append('comment_id', commentId);
 
-    fetch(`/comment/${postSlug}/${commentId}/edit/`, {
-        method: "POST",
+    fetch('/comment/' + postSlug + '/' + commentId + '/edit/', {
+        method: 'POST',
         body: formData,
         headers: {
             'X-Requested-With': 'XMLHttpRequest',
             'X-CSRFToken': getCookie('csrftoken')
         }
-    }).then(response => response.json())
-      .then(data => {
-          if (data.success) {
-              alert(data.message);
-              location.reload();
-          } else {
-              alert(data.error);
-          }
-      }).catch(error => console.log(error));
-}
+    })
+    .then(function(response) {
+        return response.json();
+    })
+    .then(function(data) {
+        if (data.success) {
+            alert(data.message);
+            location.reload();
+        } else {
+            alert(data.error);
+        }
+    })
+    .catch(function(error) {
+        console.error(error);
+    });
+};
 
-function confirmDeletion() {
+// Function to confirm deletion of a comment
+var confirmDeletion = function() {
     return confirm('Are you sure you want to delete this comment?');
-}
+};
 
 // Function to get CSRF token from cookies
-function getCookie(name) {
-    let cookieValue = null;
+var getCookie = function(name) {
+    var cookieValue = null;
     if (document.cookie && document.cookie !== '') {
-        let cookies = document.cookie.split(';');
-        for (let i = 0; i < cookies.length; i++) {
-            let cookie = cookies[i].trim();
-            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = cookies[i].trim();
+            if (cookie.indexOf(name + '=') === 0) {
                 cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
                 break;
             }
         }
     }
     return cookieValue;
-}
+};

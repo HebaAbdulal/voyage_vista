@@ -184,7 +184,7 @@ class TestEditPostView(TestCase):
         # Check for success message
         messages = list(get_messages(response.wsgi_request))
         self.assertEqual(len(messages), 1)
-        self.assertEqual(messages[0].message, 'Post updated successfully and is now awaiting approval.')
+        self.assertEqual(messages[0].message, 'Post updated and is now awaiting approval.')
 
     def test_edit_post_view_post_invalid(self):
         """

@@ -15,11 +15,11 @@ class PostForm(forms.ModelForm):
     class Meta:
         model = Post
         fields = ['title', 'content', 'featured_image', 'excerpt', 'category']
-    
+
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user', None)  # Extract user from kwargs
         super().__init__(*args, **kwargs)
-    
+
     def save(self, commit=True):
         post = super().save(commit=False)
         post.approved = False  # Set approved to False by default
@@ -31,6 +31,7 @@ class PostForm(forms.ModelForm):
         if commit:
             post.save()
         return post
+
 
 class RatingForm(forms.ModelForm):
     """

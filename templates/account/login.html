@@ -1,3 +1,5 @@
+<!DOCTYPE html>
+
 {% extends "base.html" %}
 {% load i18n %}
 
@@ -13,7 +15,8 @@
 
           <p class="card-text text-center">
             {% trans "If you don't have an account, then please" %} 
-            <a class="color" href="{{ signup_url }}" class="text-decoration-none">{% trans "SIGN UP" %}</a>
+            <!-- Consolidated class attributes -->
+            <a class="color text-decoration-none" href="{{ signup_url }}">{% trans "SIGN UP" %}</a>
             {% trans "first." %}
           </p>
 
